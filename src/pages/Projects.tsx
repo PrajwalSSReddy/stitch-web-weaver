@@ -37,7 +37,7 @@ const Projects = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent/20 to-background text-foreground py-20">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -48,7 +48,7 @@ const Projects = () => {
           <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Projects
           </h1>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             A selection of projects showcasing my skills in iOS, Python, UI/UX Design, and React development.
           </p>
         </motion.div>
@@ -61,20 +61,20 @@ const Projects = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <Card className={`bg-gradient-to-br ${project.gradient} border-slate-700 hover:border-slate-600 transition-all duration-300 group cursor-pointer h-full`}>
+              <Card className={`bg-gradient-to-br ${project.gradient} border-border hover:border-primary/50 transition-all duration-300 group cursor-pointer h-full`}>
                 <div className="relative overflow-hidden rounded-t-lg">
                   <img
                     src={project.image}
                     alt={project.title}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
                 </div>
                 <CardHeader>
-                  <CardTitle className="text-white group-hover:text-blue-400 transition-colors duration-300">
+                  <CardTitle className="text-foreground group-hover:text-blue-400 transition-colors duration-300">
                     {project.title}
                   </CardTitle>
-                  <CardDescription className="text-slate-300">
+                  <CardDescription className="text-muted-foreground">
                     {project.description}
                   </CardDescription>
                 </CardHeader>
@@ -83,7 +83,7 @@ const Projects = () => {
                     {project.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-3 py-1 bg-slate-700/50 rounded-full text-sm text-slate-300"
+                        className="px-3 py-1 bg-secondary/50 rounded-full text-sm text-secondary-foreground"
                       >
                         {tag}
                       </span>
@@ -93,7 +93,7 @@ const Projects = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                      className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
                     >
                       <Github className="w-4 h-4 mr-2" />
                       Code
@@ -101,7 +101,7 @@ const Projects = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                      className="border-border text-muted-foreground hover:bg-accent hover:text-foreground"
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       Live Demo
