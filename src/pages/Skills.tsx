@@ -18,7 +18,7 @@ const Skills = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent/20 to-background text-foreground py-20">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -29,7 +29,7 @@ const Skills = () => {
           <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             My Skills
           </h1>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             My expertise spans across multiple domains, allowing me to approach projects 
             with a holistic perspective. Here's a breakdown of my key skills:
           </p>
@@ -43,15 +43,15 @@ const Skills = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-all duration-300">
+              <Card className="bg-card/50 border-border hover:border-primary/50 transition-all duration-300">
                 <CardContent className="p-8">
                   <div className="flex items-center mb-6">
                     <div className={`p-3 rounded-lg bg-gradient-to-r ${skill.color} mr-4`}>
                       <skill.icon className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white mb-2">{skill.name}</h3>
-                      <div className="w-full bg-slate-700 rounded-full h-3">
+                      <h3 className="text-xl font-bold text-foreground mb-2">{skill.name}</h3>
+                      <div className="w-full bg-muted rounded-full h-3">
                         <motion.div
                           className={`h-3 rounded-full bg-gradient-to-r ${skill.color}`}
                           initial={{ width: 0 }}
@@ -59,10 +59,10 @@ const Skills = () => {
                           transition={{ duration: 1.5, delay: index * 0.2 }}
                         />
                       </div>
-                      <span className="text-slate-400 text-sm mt-1 block">{skill.level}%</span>
+                      <span className="text-muted-foreground text-sm mt-1 block">{skill.level}%</span>
                     </div>
                   </div>
-                  <p className="text-slate-300 text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     {skill.name === "iOS Development" && "Proficient in Swift and SwiftUI, I build robust and user-friendly iOS applications."}
                     {skill.name === "Python Development" && "Experienced in developing backend systems, data analysis tools, and automation scripts using Python."}
                     {skill.name === "UI/UX Design" && "I create intuitive and visually appealing user interfaces, focusing on user experience and accessibility."}
@@ -80,7 +80,7 @@ const Skills = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-center"
         >
-          <h2 className="text-3xl font-bold mb-8 text-white">Technologies & Tools</h2>
+          <h2 className="text-3xl font-bold mb-8 text-foreground">Technologies & Tools</h2>
           <div className="flex flex-wrap justify-center gap-4">
             {technologies.map((tech, index) => (
               <motion.span
@@ -88,7 +88,7 @@ const Skills = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="px-6 py-3 bg-gradient-to-r from-slate-700 to-slate-600 rounded-full text-white font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-300 cursor-pointer"
+                className="px-6 py-3 bg-secondary rounded-full text-secondary-foreground font-medium hover:bg-primary hover:text-primary-foreground transition-all duration-300 cursor-pointer"
               >
                 {tech}
               </motion.span>
