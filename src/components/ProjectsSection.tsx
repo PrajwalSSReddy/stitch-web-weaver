@@ -1,4 +1,5 @@
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Code, ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import MicroArtHover from "./MicroArtHover";
@@ -43,19 +44,28 @@ const ProjectsSection = () => {
 
   // Update current project when carousel changes
   const onSelect = useCallback(() => {
-    if (!api) return;
-    setCurrentProject(api.selectedScrollSnap());
-    console.log("Project changed to:", api.selectedScrollSnap());
+    if (!api) {
+      console.log("API not available in onSelect");
+      return;
+    }
+    const newIndex = api.selectedScrollSnap();
+    console.log("Carousel selection changed to:", newIndex);
+    setCurrentProject(newIndex);
   }, [api]);
 
-  // Set up carousel API
+  // Set up carousel API and event listeners
   useEffect(() => {
-    if (!api) return;
+    if (!api) {
+      console.log("API not available in useEffect");
+      return;
+    }
 
+    console.log("Setting up carousel API");
     setCurrentProject(api.selectedScrollSnap());
     api.on("select", onSelect);
 
     return () => {
+      console.log("Cleaning up carousel API");
       api?.off("select", onSelect);
     };
   }, [api, onSelect]);
@@ -176,24 +186,33 @@ const ProjectsSection = () => {
   const handlePrevProject = useCallback(() => {
     console.log("Previous button clicked, API exists:", !!api);
     if (api) {
+      console.log("Current scroll snap before prev:", api.selectedScrollSnap());
       api.scrollPrev();
       console.log("ScrollPrev called");
+    } else {
+      console.error("API not available for previous button");
     }
   }, [api]);
 
   const handleNextProject = useCallback(() => {
     console.log("Next button clicked, API exists:", !!api);
     if (api) {
+      console.log("Current scroll snap before next:", api.selectedScrollSnap());
       api.scrollNext();
       console.log("ScrollNext called");
+    } else {
+      console.error("API not available for next button");
     }
   }, [api]);
 
   const handleProjectSelect = useCallback((index: number) => {
     console.log("Project selected:", index, "API exists:", !!api);
     if (api) {
+      console.log("Current scroll snap before select:", api.selectedScrollSnap());
       api.scrollTo(index);
       console.log("ScrollTo called with index:", index);
+    } else {
+      console.error("API not available for project selection");
     }
   }, [api]);
 
