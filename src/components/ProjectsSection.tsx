@@ -17,24 +17,18 @@ const ProjectsSection = () => {
     offset: ["start 80%", "end 20%"] // Start animation when MacBook enters viewport, end when it leaves
   });
 
-  // Smoother lid rotation with easing - opens when scrolling into view, closes when scrolling out
+  // Smoother lid rotation - opens when scrolling into view, closes when scrolling out
   const lidRotation = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
-    [0, -95, -95, 0], // Slightly more open angle for better visibility
-    {
-      ease: [0.25, 0.46, 0.45, 0.94] // Custom easing for smoother animation
-    }
+    [0, -95, -95, 0] // Slightly more open angle for better visibility
   );
   
   // Smoother opacity transition
   const baseOpacity = useTransform(
     scrollYProgress, 
     [0, 0.15, 0.85, 1], 
-    [0.4, 1, 1, 0.4],
-    {
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
+    [0.4, 1, 1, 0.4]
   );
 
   // Scale animation for more dynamic effect
