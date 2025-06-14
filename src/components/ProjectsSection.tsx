@@ -24,28 +24,6 @@ const ProjectsSection = () => {
       type: "powerbi"
     },
     {
-      title: "Cricket Analysis-PowerBI",
-      description: "This dashboard will analyze cricket player statistics and select the best 11 based on the T20 World Cup 2022 using pandas, numpy, data extraction from the ESPN website and Power BI.",
-      image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&h=600&fit=crop",
-      technologies: ["PowerBI", "Python", "Pandas", "NumPy"],
-      githubUrl: "",
-      liveUrl: "https://app.powerbi.com/links/T1-xQGfpDX?ctid=89bf0b5b-6665-4eb0-a6fc-fc2e8734863e&pbi_source=linkShare",
-      featured: true,
-      date: "Jun-2023",
-      type: "powerbi"
-    },
-    {
-      title: "Movie Recommendation System",
-      description: "A movie recommendation system is an ML-based approach to filtering or predicting the users film preferences based on their past choices and behaviour.",
-      image: "https://images.unsplash.com/photo-1489599510536-e2523b6b6b5a?w=800&h=600&fit=crop",
-      technologies: ["Python", "Machine Learning", "Streamlit"],
-      githubUrl: "",
-      liveUrl: "https://movie1recommended1system.streamlit.app/",
-      featured: true,
-      date: "Mar-2023",
-      type: "website"
-    },
-    {
       title: "Excel Sales Analytics",
       description: "This project demonstrates a comprehensive approach to sales and finance data analysis, providing valuable insights that can drive business strategy.",
       image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
@@ -79,6 +57,17 @@ const ProjectsSection = () => {
       type: "github"
     },
     {
+      title: "Cricket Analysis-PowerBI",
+      description: "This dashboard will analyze cricket player statistics and select the best 11 based on the T20 World Cup 2022 using pandas, numpy, data extraction from the ESPN website and Power BI.",
+      image: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&h=600&fit=crop",
+      technologies: ["PowerBI", "Python", "Pandas", "NumPy"],
+      githubUrl: "",
+      liveUrl: "https://app.powerbi.com/links/T1-xQGfpDX?ctid=89bf0b5b-6665-4eb0-a6fc-fc2e8734863e&pbi_source=linkShare",
+      featured: true,
+      date: "Jun-2023",
+      type: "powerbi"
+    },
+    {
       title: "Autonomous Trash Collecting Robot",
       description: "This project worked on Image recognization using deep learning, of CNN algorithm with Densenet121 Architecture, which uses a number of layers which contains neurons to find the trash in image captured by camera.",
       image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&h=600&fit=crop",
@@ -88,6 +77,17 @@ const ProjectsSection = () => {
       featured: false,
       date: "Apr-2023",
       type: "github"
+    },
+    {
+      title: "Movie Recommendation System",
+      description: "A movie recommendation system is an ML-based approach to filtering or predicting the users film preferences based on their past choices and behaviour.",
+      image: "https://images.unsplash.com/photo-1489599510536-e2523b6b6b5a?w=800&h=600&fit=crop",
+      technologies: ["Python", "Machine Learning", "Streamlit"],
+      githubUrl: "",
+      liveUrl: "https://movie1recommended1system.streamlit.app/",
+      featured: true,
+      date: "Mar-2023",
+      type: "website"
     },
     {
       title: "IPL Batting Analysis",
@@ -139,7 +139,7 @@ const ProjectsSection = () => {
   const currentProjectData = projects[currentProject];
 
   return (
-    <section className={`py-20 relative ${
+    <section className={`py-20 relative min-h-screen ${
       isDark 
         ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" 
         : "bg-gradient-to-br from-slate-50 via-white to-slate-100"
@@ -191,97 +191,129 @@ const ProjectsSection = () => {
           </motion.div>
         </ParallaxSection>
 
-        {/* MacBook Container */}
+        {/* MacBook Container - Real Dimensions */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto mb-16"
+          className="max-w-7xl mx-auto mb-16"
         >
-          {/* MacBook Base */}
+          {/* MacBook Base with 16:10 aspect ratio */}
           <motion.div
-            className={`relative rounded-3xl ${
+            className={`relative mx-auto ${
               isDark 
                 ? "bg-gradient-to-br from-slate-700 to-slate-800" 
                 : "bg-gradient-to-br from-slate-200 to-slate-300"
-            } p-2 shadow-2xl`}
-            whileHover={{ scale: 1.01 }}
+            } shadow-2xl`}
+            style={{
+              width: '100%',
+              maxWidth: '1200px',
+              aspectRatio: '16/10',
+              borderRadius: '24px',
+              padding: '8px',
+            }}
+            whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.3 }}
           >
             {/* MacBook Screen */}
-            <div className={`relative rounded-2xl overflow-hidden ${
-              isDark ? "bg-slate-900" : "bg-white"
-            } shadow-inner`}>
+            <div 
+              className={`relative overflow-hidden ${
+                isDark ? "bg-slate-900" : "bg-white"
+              } shadow-inner`}
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '20px',
+              }}
+            >
               {/* Screen Bezel */}
-              <div className={`absolute inset-0 rounded-2xl border-4 ${
+              <div className={`absolute inset-0 border-4 ${
                 isDark ? "border-slate-800" : "border-slate-100"
-              } pointer-events-none z-10`} />
+              } pointer-events-none z-10`} 
+              style={{ borderRadius: '20px' }} />
               
               {/* Navigation Controls */}
               <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between">
-                <button
+                <motion.button
                   onClick={handlePrevProject}
-                  className={`w-10 h-10 rounded-full ${
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className={`w-12 h-12 rounded-full ${
                     isDark 
-                      ? "bg-slate-800/80 text-slate-300 hover:bg-slate-700" 
-                      : "bg-white/80 text-slate-600 hover:bg-slate-100"
-                  } backdrop-blur-sm flex items-center justify-center transition-colors duration-300 shadow-lg`}
+                      ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
+                      : "bg-white/90 text-slate-600 hover:bg-slate-100"
+                  } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
+                    isDark ? "border-slate-700" : "border-slate-200"
+                  }`}
                 >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
+                  <ChevronLeft className="w-6 h-6" />
+                </motion.button>
 
                 {/* Project Counter */}
-                <div className={`px-4 py-2 rounded-full ${
+                <div className={`px-6 py-3 rounded-full ${
                   isDark 
-                    ? "bg-slate-800/80 text-slate-300" 
-                    : "bg-white/80 text-slate-600"
-                } backdrop-blur-sm text-sm font-medium shadow-lg`}>
+                    ? "bg-slate-800/90 text-slate-300" 
+                    : "bg-white/90 text-slate-600"
+                } backdrop-blur-sm font-medium shadow-lg border ${
+                  isDark ? "border-slate-700" : "border-slate-200"
+                }`}>
                   {currentProject + 1} / {projects.length}
                 </div>
 
-                <button
+                <motion.button
                   onClick={handleNextProject}
-                  className={`w-10 h-10 rounded-full ${
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className={`w-12 h-12 rounded-full ${
                     isDark 
-                      ? "bg-slate-800/80 text-slate-300 hover:bg-slate-700" 
-                      : "bg-white/80 text-slate-600 hover:bg-slate-100"
-                  } backdrop-blur-sm flex items-center justify-center transition-colors duration-300 shadow-lg`}
+                      ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
+                      : "bg-white/90 text-slate-600 hover:bg-slate-100"
+                  } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
+                    isDark ? "border-slate-700" : "border-slate-200"
+                  }`}
                 >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
+                  <ChevronRight className="w-6 h-6" />
+                </motion.button>
               </div>
 
-              {/* Project Content */}
+              {/* Project Content with Smooth Scrolling */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentProject}
-                  initial={{ opacity: 0, x: 300 }}
+                  initial={{ opacity: 0, x: 100 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -300 }}
-                  transition={{ duration: 0.5 }}
-                  className="relative h-96"
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ 
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30,
+                    duration: 0.5 
+                  }}
+                  className="relative w-full h-full"
                 >
                   {/* Browser Chrome */}
-                  <div className={`flex items-center justify-between px-6 py-3 ${
+                  <div className={`flex items-center justify-between px-6 py-4 ${
                     isDark ? "bg-slate-800 border-b border-slate-700" : "bg-slate-100 border-b border-slate-200"
                   }`}>
                     {/* Traffic Lights */}
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-red-500" />
-                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                      <div className="w-4 h-4 rounded-full bg-red-500 shadow-sm" />
+                      <div className="w-4 h-4 rounded-full bg-yellow-500 shadow-sm" />
+                      <div className="w-4 h-4 rounded-full bg-green-500 shadow-sm" />
                     </div>
 
                     {/* URL Bar */}
-                    <div className={`flex-1 mx-6 px-4 py-2 rounded-lg ${
+                    <div className={`flex-1 mx-6 px-4 py-3 rounded-lg ${
                       isDark ? "bg-slate-700 text-slate-300" : "bg-white text-slate-600"
-                    } text-sm font-mono truncate`}>
+                    } font-mono truncate border ${
+                      isDark ? "border-slate-600" : "border-slate-300"
+                    }`}>
                       {currentProjectData.liveUrl}
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                       {currentProjectData.githubUrl && (
                         <motion.a
                           href={currentProjectData.githubUrl}
@@ -289,13 +321,15 @@ const ProjectsSection = () => {
                           rel="noopener noreferrer"
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          className={`w-8 h-8 rounded-full ${
+                          className={`w-10 h-10 rounded-full ${
                             isDark 
                               ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
                               : "bg-white text-slate-600 hover:bg-slate-50"
-                          } flex items-center justify-center transition-colors duration-300`}
+                          } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
+                            isDark ? "border-slate-600" : "border-slate-300"
+                          }`}
                         >
-                          <Github className="w-4 h-4" />
+                          <Github className="w-5 h-5" />
                         </motion.a>
                       )}
                       <motion.a
@@ -304,69 +338,76 @@ const ProjectsSection = () => {
                         rel="noopener noreferrer"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className={`w-8 h-8 rounded-full ${
+                        className={`w-10 h-10 rounded-full ${
                           isDark 
                             ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
                             : "bg-white text-slate-600 hover:bg-slate-50"
-                        } flex items-center justify-center transition-colors duration-300`}
+                        } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
+                          isDark ? "border-slate-600" : "border-slate-300"
+                        }`}
                       >
-                        <ExternalLink className="w-4 h-4" />
+                        <ExternalLink className="w-5 h-5" />
                       </motion.a>
                     </div>
                   </div>
 
                   {/* Embedded Website */}
-                  <div className="h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+                  <div className="relative" style={{ height: 'calc(100% - 80px)' }}>
                     <iframe
                       src={currentProjectData.liveUrl}
                       title={currentProjectData.title}
                       className="w-full h-full border-0"
                       sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-top-navigation"
                     />
-                  </div>
-
-                  {/* Project Info Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-xl font-bold text-white">
-                        {currentProjectData.title}
-                      </h3>
-                      <span className="text-sm px-3 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm">
-                        {currentProjectData.date}
-                      </span>
-                    </div>
-                    <p className="text-sm text-white/90 mb-3">
-                      {currentProjectData.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {currentProjectData.technologies.map((tech, techIndex) => (
-                        <span
-                          key={techIndex}
-                          className="px-2 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-400/30"
-                        >
-                          {tech}
+                    
+                    {/* Project Info Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/50 to-transparent">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-2xl font-bold text-white">
+                          {currentProjectData.title}
+                        </h3>
+                        <span className="text-sm px-4 py-2 rounded-full bg-white/20 text-white backdrop-blur-sm border border-white/30">
+                          {currentProjectData.date}
                         </span>
-                      ))}
+                      </div>
+                      <p className="text-white/90 mb-4 text-lg leading-relaxed">
+                        {currentProjectData.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {currentProjectData.technologies.map((tech, techIndex) => (
+                          <span
+                            key={techIndex}
+                            className="px-3 py-2 rounded-full text-sm font-medium bg-blue-500/30 text-blue-200 border border-blue-400/50 backdrop-blur-sm"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Featured Badge */}
-                  {currentProjectData.featured && (
-                    <div className="absolute top-20 left-6 px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-400/30 backdrop-blur-sm">
-                      <span className="text-xs font-medium">Featured</span>
-                    </div>
-                  )}
+                    {/* Featured Badge */}
+                    {currentProjectData.featured && (
+                      <div className="absolute top-6 left-6 px-4 py-2 rounded-full bg-yellow-500/30 text-yellow-300 border border-yellow-400/50 backdrop-blur-sm">
+                        <span className="text-sm font-medium">Featured</span>
+                      </div>
+                    )}
+                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>
           </motion.div>
 
           {/* MacBook Base/Keyboard */}
-          <div className={`mt-2 h-4 rounded-b-2xl ${
+          <div className={`mt-2 h-6 mx-auto ${
             isDark 
               ? "bg-gradient-to-b from-slate-700 to-slate-800" 
               : "bg-gradient-to-b from-slate-200 to-slate-300"
-          } shadow-lg`} />
+          } shadow-lg`} 
+          style={{
+            width: '100%',
+            maxWidth: '1200px',
+            borderRadius: '0 0 24px 24px',
+          }} />
         </motion.div>
 
         {/* Project List */}
@@ -375,44 +416,44 @@ const ProjectsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="max-w-4xl mx-auto"
+          className="max-w-7xl mx-auto"
         >
-          <h3 className={`text-2xl font-bold text-center mb-8 ${
+          <h3 className={`text-3xl font-bold text-center mb-12 ${
             isDark ? "text-white" : "text-slate-900"
           }`}>
             All Projects
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {projects.map((project, index) => (
               <motion.button
                 key={index}
                 onClick={() => handleProjectSelect(index)}
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.03, y: -5 }}
                 whileTap={{ scale: 0.98 }}
-                className={`p-4 rounded-xl text-left transition-all duration-300 ${
+                className={`p-6 rounded-xl text-left transition-all duration-300 ${
                   currentProject === index
                     ? (isDark 
-                        ? "bg-blue-500/20 border-2 border-blue-400" 
-                        : "bg-blue-500/10 border-2 border-blue-500")
+                        ? "bg-blue-500/20 border-2 border-blue-400 shadow-lg shadow-blue-500/20" 
+                        : "bg-blue-500/10 border-2 border-blue-500 shadow-lg shadow-blue-500/20")
                     : (isDark 
-                        ? "bg-slate-800/50 border border-slate-700 hover:bg-slate-800" 
-                        : "bg-white/50 border border-slate-200 hover:bg-white")
+                        ? "bg-slate-800/50 border border-slate-700 hover:bg-slate-800 hover:border-slate-600" 
+                        : "bg-white/50 border border-slate-200 hover:bg-white hover:border-slate-300")
                 }`}
               >
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center gap-4 mb-3">
                   <img
                     src={project.image}
                     alt={project.title}
-                    className="w-12 h-12 rounded-lg object-cover"
+                    className="w-14 h-14 rounded-lg object-cover shadow-sm"
                   />
                   <div className="flex-1">
-                    <h4 className={`font-semibold text-sm ${
+                    <h4 className={`font-semibold ${
                       isDark ? "text-white" : "text-slate-900"
-                    }`}>
+                    } line-clamp-2`}>
                       {project.title}
                     </h4>
-                    <span className={`text-xs ${
+                    <span className={`text-sm ${
                       isDark ? "text-slate-400" : "text-slate-500"
                     }`}>
                       {project.date}
@@ -420,7 +461,7 @@ const ProjectsSection = () => {
                   </div>
                 </div>
                 
-                <div className="flex flex-wrap gap-1 mb-2">
+                <div className="flex flex-wrap gap-2 mb-3">
                   {project.technologies.slice(0, 3).map((tech, techIndex) => (
                     <span
                       key={techIndex}
@@ -442,20 +483,20 @@ const ProjectsSection = () => {
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {project.githubUrl && (
                     <a
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className={`w-6 h-6 rounded flex items-center justify-center ${
+                      className={`w-8 h-8 rounded flex items-center justify-center ${
                         isDark 
                           ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
                           : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       } transition-colors`}
                     >
-                      <Github className="w-3 h-3" />
+                      <Github className="w-4 h-4" />
                     </a>
                   )}
                   <a
@@ -463,13 +504,13 @@ const ProjectsSection = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className={`w-6 h-6 rounded flex items-center justify-center ${
+                    className={`w-8 h-8 rounded flex items-center justify-center ${
                       isDark 
                         ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
                         : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     } transition-colors`}
                   >
-                    <ExternalLink className="w-3 h-3" />
+                    <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
               </motion.button>
