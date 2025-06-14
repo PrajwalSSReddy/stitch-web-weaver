@@ -1,15 +1,25 @@
-
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Code, ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import MicroArtHover from "./MicroArtHover";
 import ParallaxSection from "./ParallaxSection";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const ProjectsSection = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
   const [currentProject, setCurrentProject] = useState(0);
+  const macbookRef = useRef<HTMLDivElement>(null);
+
+  // Scroll-based animations for MacBook
+  const { scrollYProgress } = useScroll({
+    target: macbookRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Transform scroll progress to rotation angle (0 to -120 degrees)
+  const lidRotation = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, -90, -90, 0]);
+  const baseOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.3, 1, 1, 0.3]);
 
   const projects = [
     {
@@ -191,132 +201,156 @@ const ProjectsSection = () => {
           </motion.div>
         </ParallaxSection>
 
-        {/* MacBook Container - Real Dimensions (14:9 ratio for MacBook Pro) */}
+        {/* MacBook Container with Opening/Closing Animation */}
         <motion.div
+          ref={macbookRef}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="max-w-7xl mx-auto mb-16"
+          className="max-w-7xl mx-auto mb-16 perspective-1000"
+          style={{ 
+            perspective: '1000px',
+            opacity: baseOpacity 
+          }}
         >
-          {/* MacBook Base with 14:9 aspect ratio */}
-          <motion.div
-            className={`relative mx-auto ${
-              isDark 
-                ? "bg-gradient-to-br from-slate-700 to-slate-800" 
-                : "bg-gradient-to-br from-slate-200 to-slate-300"
-            } shadow-2xl`}
-            style={{
-              width: '100%',
-              maxWidth: '1400px',
-              aspectRatio: '14/9',
-              borderRadius: '24px',
-              padding: '8px',
-            }}
-            whileHover={{ scale: 1.01 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* MacBook Screen */}
-            <div 
-              className={`relative overflow-hidden ${
-                isDark ? "bg-slate-900" : "bg-white"
-              } shadow-inner`}
+          {/* MacBook Base */}
+          <div className="relative mx-auto" style={{ width: '100%', maxWidth: '1400px' }}>
+            {/* MacBook Lid (Screen) */}
+            <motion.div
+              className={`relative ${
+                isDark 
+                  ? "bg-gradient-to-br from-slate-700 to-slate-800" 
+                  : "bg-gradient-to-br from-slate-200 to-slate-300"
+              } shadow-2xl`}
               style={{
                 width: '100%',
-                height: '100%',
-                borderRadius: '20px',
+                aspectRatio: '14/9',
+                borderRadius: '24px',
+                padding: '8px',
+                transformOrigin: 'bottom center',
+                rotateX: lidRotation,
+                transformStyle: 'preserve-3d'
               }}
             >
-              {/* Screen Bezel */}
-              <div className={`absolute inset-0 border-4 ${
-                isDark ? "border-slate-800" : "border-slate-100"
-              } pointer-events-none z-10`} 
-              style={{ borderRadius: '20px' }} />
-              
-              {/* Navigation Controls */}
-              <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between">
-                <motion.button
-                  onClick={handlePrevProject}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className={`w-12 h-12 rounded-full ${
+              {/* MacBook Screen */}
+              <div 
+                className={`relative overflow-hidden ${
+                  isDark ? "bg-slate-900" : "bg-white"
+                } shadow-inner`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '20px',
+                }}
+              >
+                {/* Screen Bezel */}
+                <div className={`absolute inset-0 border-4 ${
+                  isDark ? "border-slate-800" : "border-slate-100"
+                } pointer-events-none z-10`} 
+                style={{ borderRadius: '20px' }} />
+                
+                {/* Navigation Controls */}
+                <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between">
+                  <motion.button
+                    onClick={handlePrevProject}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className={`w-12 h-12 rounded-full ${
+                      isDark 
+                        ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
+                        : "bg-white/90 text-slate-600 hover:bg-slate-100"
+                    } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
+                      isDark ? "border-slate-700" : "border-slate-200"
+                    }`}
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </motion.button>
+
+                  {/* Project Counter */}
+                  <div className={`px-6 py-3 rounded-full ${
                     isDark 
-                      ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
-                      : "bg-white/90 text-slate-600 hover:bg-slate-100"
-                  } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
+                      ? "bg-slate-800/90 text-slate-300" 
+                      : "bg-white/90 text-slate-600"
+                  } backdrop-blur-sm font-medium shadow-lg border ${
+                    isDark ? "border-slate-700" : "border-slate-200"
+                  }`}>
+                    {currentProject + 1} / {projects.length}
+                  </div>
+
+                  <motion.button
+                    onClick={handleNextProject}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className={`w-12 h-12 rounded-full ${
+                      isDark 
+                        ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
+                        : "bg-white/90 text-slate-600 hover:bg-slate-100"
+                    } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
                     isDark ? "border-slate-700" : "border-slate-200"
                   }`}
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </motion.button>
-
-                {/* Project Counter */}
-                <div className={`px-6 py-3 rounded-full ${
-                  isDark 
-                    ? "bg-slate-800/90 text-slate-300" 
-                    : "bg-white/90 text-slate-600"
-                } backdrop-blur-sm font-medium shadow-lg border ${
-                  isDark ? "border-slate-700" : "border-slate-200"
-                }`}>
-                  {currentProject + 1} / {projects.length}
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </motion.button>
                 </div>
 
-                <motion.button
-                  onClick={handleNextProject}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className={`w-12 h-12 rounded-full ${
-                    isDark 
-                      ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
-                      : "bg-white/90 text-slate-600 hover:bg-slate-100"
-                  } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
-                    isDark ? "border-slate-700" : "border-slate-200"
-                  }`}
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </motion.button>
-              </div>
-
-              {/* Project Content with Smooth Scrolling */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentProject}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ 
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 30,
-                    duration: 0.5 
-                  }}
-                  className="relative w-full h-full"
-                >
-                  {/* Browser Chrome */}
-                  <div className={`flex items-center justify-between px-6 py-4 ${
-                    isDark ? "bg-slate-800 border-b border-slate-700" : "bg-slate-100 border-b border-slate-200"
-                  }`}>
-                    {/* Traffic Lights */}
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 rounded-full bg-red-500 shadow-sm" />
-                      <div className="w-4 h-4 rounded-full bg-yellow-500 shadow-sm" />
-                      <div className="w-4 h-4 rounded-full bg-green-500 shadow-sm" />
-                    </div>
-
-                    {/* URL Bar */}
-                    <div className={`flex-1 mx-6 px-4 py-3 rounded-lg ${
-                      isDark ? "bg-slate-700 text-slate-300" : "bg-white text-slate-600"
-                    } font-mono text-sm truncate border ${
-                      isDark ? "border-slate-600" : "border-slate-300"
+                {/* Project Content with Smooth Scrolling */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentProject}
+                    initial={{ opacity: 0, x: 100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    transition={{ 
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30,
+                      duration: 0.5 
+                    }}
+                    className="relative w-full h-full"
+                  >
+                    {/* Browser Chrome */}
+                    <div className={`flex items-center justify-between px-6 py-4 ${
+                      isDark ? "bg-slate-800 border-b border-slate-700" : "bg-slate-100 border-b border-slate-200"
                     }`}>
-                      {currentProjectData.liveUrl}
-                    </div>
+                      {/* Traffic Lights */}
+                      <div className="flex items-center gap-3">
+                        <div className="w-4 h-4 rounded-full bg-red-500 shadow-sm" />
+                        <div className="w-4 h-4 rounded-full bg-yellow-500 shadow-sm" />
+                        <div className="w-4 h-4 rounded-full bg-green-500 shadow-sm" />
+                      </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-3">
-                      {currentProjectData.githubUrl && (
+                      {/* URL Bar */}
+                      <div className={`flex-1 mx-6 px-4 py-3 rounded-lg ${
+                        isDark ? "bg-slate-700 text-slate-300" : "bg-white text-slate-600"
+                      } font-mono text-sm truncate border ${
+                        isDark ? "border-slate-600" : "border-slate-300"
+                      }`}>
+                        {currentProjectData.liveUrl}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-3">
+                        {currentProjectData.githubUrl && (
+                          <motion.a
+                            href={currentProjectData.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className={`w-10 h-10 rounded-full ${
+                              isDark 
+                                ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
+                                : "bg-white text-slate-600 hover:bg-slate-50"
+                            } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
+                              isDark ? "border-slate-600" : "border-slate-300"
+                            }`}
+                          >
+                            <Github className="w-5 h-5" />
+                          </motion.a>
+                        )}
                         <motion.a
-                          href={currentProjectData.githubUrl}
+                          href={currentProjectData.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           whileHover={{ scale: 1.1 }}
@@ -329,117 +363,101 @@ const ProjectsSection = () => {
                             isDark ? "border-slate-600" : "border-slate-300"
                           }`}
                         >
-                          <Github className="w-5 h-5" />
+                          <ExternalLink className="w-5 h-5" />
                         </motion.a>
-                      )}
-                      <motion.a
-                        href={currentProjectData.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className={`w-10 h-10 rounded-full ${
-                          isDark 
-                            ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
-                            : "bg-white text-slate-600 hover:bg-slate-50"
-                        } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
-                          isDark ? "border-slate-600" : "border-slate-300"
-                        }`}
-                      >
-                        <ExternalLink className="w-5 h-5" />
-                      </motion.a>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Project Visualization */}
-                  <div className="relative" style={{ height: 'calc(100% - 80px)' }}>
-                    {/* Project Image/Preview */}
-                    <div className="relative w-full h-full overflow-hidden">
-                      <img
-                        src={currentProjectData.image}
-                        alt={currentProjectData.title}
-                        className="w-full h-full object-cover"
-                      />
-                      
-                      {/* Overlay with project details */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
-                        <div className="text-white">
-                          <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-3xl font-bold">
-                              {currentProjectData.title}
-                            </h3>
-                            <span className="text-sm px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
-                              {currentProjectData.date}
-                            </span>
-                          </div>
-                          <p className="text-white/90 mb-6 text-lg leading-relaxed max-w-4xl">
-                            {currentProjectData.description}
-                          </p>
-                          <div className="flex flex-wrap gap-3 mb-6">
-                            {currentProjectData.technologies.map((tech, techIndex) => (
-                              <span
-                                key={techIndex}
-                                className="px-4 py-2 rounded-full text-sm font-medium bg-blue-500/30 text-blue-200 border border-blue-400/50 backdrop-blur-sm"
-                              >
-                                {tech}
+                    {/* Project Visualization */}
+                    <div className="relative" style={{ height: 'calc(100% - 80px)' }}>
+                      {/* Project Image/Preview */}
+                      <div className="relative w-full h-full overflow-hidden">
+                        <img
+                          src={currentProjectData.image}
+                          alt={currentProjectData.title}
+                          className="w-full h-full object-cover"
+                        />
+                        
+                        {/* Overlay with project details */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
+                          <div className="text-white">
+                            <div className="flex items-center justify-between mb-4">
+                              <h3 className="text-3xl font-bold">
+                                {currentProjectData.title}
+                              </h3>
+                              <span className="text-sm px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+                                {currentProjectData.date}
                               </span>
-                            ))}
-                          </div>
-                          
-                          {/* Action Buttons */}
-                          <div className="flex gap-4">
-                            {currentProjectData.githubUrl && (
+                            </div>
+                            <p className="text-white/90 mb-6 text-lg leading-relaxed max-w-4xl">
+                              {currentProjectData.description}
+                            </p>
+                            <div className="flex flex-wrap gap-3 mb-6">
+                              {currentProjectData.technologies.map((tech, techIndex) => (
+                                <span
+                                  key={techIndex}
+                                  className="px-4 py-2 rounded-full text-sm font-medium bg-blue-500/30 text-blue-200 border border-blue-400/50 backdrop-blur-sm"
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                            
+                            {/* Action Buttons */}
+                            <div className="flex gap-4">
+                              {currentProjectData.githubUrl && (
+                                <motion.a
+                                  href={currentProjectData.githubUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  className="px-6 py-3 rounded-lg bg-slate-800/50 text-white border border-slate-600 hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"
+                                >
+                                  <Github className="w-5 h-5" />
+                                  View Code
+                                </motion.a>
+                              )}
                               <motion.a
-                                href={currentProjectData.githubUrl}
+                                href={currentProjectData.liveUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="px-6 py-3 rounded-lg bg-slate-800/50 text-white border border-slate-600 hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"
+                                className="px-6 py-3 rounded-lg bg-blue-600/80 text-white border border-blue-500 hover:bg-blue-700/80 transition-all duration-300 flex items-center gap-2"
                               >
-                                <Github className="w-5 h-5" />
-                                View Code
+                                <ExternalLink className="w-5 h-5" />
+                                {currentProjectData.type === 'github' ? 'View Repository' : 'Visit Project'}
                               </motion.a>
-                            )}
-                            <motion.a
-                              href={currentProjectData.liveUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="px-6 py-3 rounded-lg bg-blue-600/80 text-white border border-blue-500 hover:bg-blue-700/80 transition-all duration-300 flex items-center gap-2"
-                            >
-                              <ExternalLink className="w-5 h-5" />
-                              {currentProjectData.type === 'github' ? 'View Repository' : 'Visit Project'}
-                            </motion.a>
+                            </div>
                           </div>
                         </div>
+
+                        {/* Featured Badge */}
+                        {currentProjectData.featured && (
+                          <div className="absolute top-6 left-6 px-4 py-2 rounded-full bg-yellow-500/30 text-yellow-300 border border-yellow-400/50 backdrop-blur-sm">
+                            <span className="text-sm font-medium">Featured</span>
+                          </div>
+                        )}
                       </div>
-
-                      {/* Featured Badge */}
-                      {currentProjectData.featured && (
-                        <div className="absolute top-6 left-6 px-4 py-2 rounded-full bg-yellow-500/30 text-yellow-300 border border-yellow-400/50 backdrop-blur-sm">
-                          <span className="text-sm font-medium">Featured</span>
-                        </div>
-                      )}
                     </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </motion.div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </motion.div>
 
-          {/* MacBook Base/Keyboard */}
-          <div className={`mt-2 h-4 mx-auto ${
-            isDark 
-              ? "bg-gradient-to-b from-slate-700 to-slate-800" 
-              : "bg-gradient-to-b from-slate-200 to-slate-300"
-          } shadow-lg`} 
-          style={{
-            width: '100%',
-            maxWidth: '1400px',
-            borderRadius: '0 0 24px 24px',
-          }} />
+            {/* MacBook Base/Keyboard */}
+            <div className={`mt-2 h-4 mx-auto ${
+              isDark 
+                ? "bg-gradient-to-b from-slate-700 to-slate-800" 
+                : "bg-gradient-to-b from-slate-200 to-slate-300"
+            } shadow-lg`} 
+            style={{
+              width: '100%',
+              maxWidth: '1400px',
+              borderRadius: '0 0 24px 24px',
+            }} />
+          </div>
         </motion.div>
 
         {/* Project List */}
@@ -517,11 +535,13 @@ const ProjectsSection = () => {
 
                 <div className="flex items-center gap-2">
                   {project.githubUrl && (
-                    <a
+                    <motion.a
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                       className={`w-7 h-7 rounded flex items-center justify-center ${
                         isDark 
                           ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
@@ -529,13 +549,15 @@ const ProjectsSection = () => {
                       } transition-colors`}
                     >
                       <Github className="w-3 h-3" />
-                    </a>
+                    </motion.a>
                   )}
-                  <a
+                  <motion.a
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                     className={`w-7 h-7 rounded flex items-center justify-center ${
                       isDark 
                         ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
@@ -543,7 +565,7 @@ const ProjectsSection = () => {
                     } transition-colors`}
                   >
                     <ExternalLink className="w-3 h-3" />
-                  </a>
+                  </motion.a>
                 </div>
               </motion.button>
             ))}
