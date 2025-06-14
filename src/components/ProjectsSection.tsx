@@ -1,4 +1,5 @@
 
+
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Code, ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
@@ -18,11 +19,11 @@ const ProjectsSection = () => {
     offset: ["start 80%", "end 20%"] // Better range for animation
   });
 
-  // Fixed lid rotation - opens fully to flat position when visible
+  // Reversed lid rotation - starts open, closes when visible, then opens again
   const lidRotation = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
-    [-10, -90, -90, -10] // Start more closed, open to fully flat (-90), stay open, then close
+    [-90, -10, -10, -90] // Reversed: start open (-90), close when visible (-10), stay closed, then open again
   );
   
   // Smoother opacity transition
