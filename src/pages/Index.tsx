@@ -1,11 +1,11 @@
-
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { ArrowRight, Code, Smartphone, Palette, Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import ParallaxSection from "@/components/ParallaxSection";
 import MicroArtHover from "@/components/MicroArtHover";
 import FloatingOrbs from "@/components/FloatingOrbs";
+import CircularButton from "@/components/CircularButton";
 
 const Index = () => {
   const skills = [
@@ -68,18 +68,13 @@ const Index = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
+              className="flex justify-center"
             >
-              <MicroArtHover variant="ripple" className="inline-block">
-                <Link to="/projects">
-                  <Button 
-                    size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 text-lg group"
-                  >
-                    View My Work
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </MicroArtHover>
+              <Link to="/projects">
+                <CircularButton>
+                  View My Work
+                </CircularButton>
+              </Link>
             </motion.div>
           </motion.div>
         </ParallaxSection>
