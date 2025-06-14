@@ -11,30 +11,30 @@ const ProjectsSection = () => {
   const [currentProject, setCurrentProject] = useState(0);
   const macbookRef = useRef<HTMLDivElement>(null);
 
-  // Improved scroll-based animations for MacBook with smoother transitions
+  // Fixed scroll-based animations for MacBook with proper opening timing
   const { scrollYProgress } = useScroll({
     target: macbookRef,
-    offset: ["start 80%", "end 20%"] // Start animation when MacBook enters viewport, end when it leaves
+    offset: ["start 90%", "end 10%"] // Start animation earlier when MacBook enters viewport
   });
 
-  // Fixed lid rotation - opens when scrolling into view, closes when scrolling out
+  // Fixed lid rotation - opens when MacBook is visible, closes when scrolling out
   const lidRotation = useTransform(
     scrollYProgress, 
-    [0, 0.2, 0.8, 1], 
-    [-5, -95, -95, -5] // Fixed: Start closed (-5), open fully (-95), stay open, then close (-5)
+    [0, 0.3, 0.7, 1], 
+    [-5, -95, -95, -5] // Start closed, open fully when visible, stay open, then close
   );
   
   // Smoother opacity transition
   const baseOpacity = useTransform(
     scrollYProgress, 
-    [0, 0.15, 0.85, 1], 
+    [0, 0.2, 0.8, 1], 
     [0.4, 1, 1, 0.4]
   );
 
   // Scale animation for more dynamic effect
   const scale = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.8, 1],
+    [0, 0.3, 0.7, 1],
     [0.95, 1, 1, 0.95]
   );
 
@@ -367,7 +367,7 @@ const ProjectsSection = () => {
                                 ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
                                 : "bg-white text-slate-600 hover:bg-slate-50"
                             } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
-                              isDark ? "border-slate-600" : "border-slate-300"
+                              isDark ? "border-slate-600" : "border-slate-200"
                             }`}
                           >
                             <Github className="w-5 h-5" />
@@ -384,7 +384,7 @@ const ProjectsSection = () => {
                               ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
                               : "bg-white text-slate-600 hover:bg-slate-50"
                           } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
-                            isDark ? "border-slate-600" : "border-slate-300"
+                            isDark ? "border-slate-600" : "border-slate-200"
                           }`}
                         >
                           <ExternalLink className="w-5 h-5" />
