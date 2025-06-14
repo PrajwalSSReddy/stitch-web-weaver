@@ -1,3 +1,4 @@
+
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Code, ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
@@ -14,27 +15,27 @@ const ProjectsSection = () => {
   // Fixed scroll-based animations for MacBook with proper opening timing
   const { scrollYProgress } = useScroll({
     target: macbookRef,
-    offset: ["start 100%", "end 0%"] // Start animation when MacBook first appears
+    offset: ["start 80%", "end 20%"] // Better range for animation
   });
 
-  // Fixed lid rotation - opens immediately when MacBook is visible
+  // Fixed lid rotation - opens fully to flat position when visible
   const lidRotation = useTransform(
     scrollYProgress, 
-    [0, 0.1, 0.9, 1], 
-    [-5, -95, -95, -5] // Start closed, open quickly when visible, stay open, then close
+    [0, 0.2, 0.8, 1], 
+    [-10, -90, -90, -10] // Start more closed, open to fully flat (-90), stay open, then close
   );
   
   // Smoother opacity transition
   const baseOpacity = useTransform(
     scrollYProgress, 
-    [0, 0.1, 0.9, 1], 
+    [0, 0.2, 0.8, 1], 
     [0.4, 1, 1, 0.4]
   );
 
   // Scale animation for more dynamic effect
   const scale = useTransform(
     scrollYProgress,
-    [0, 0.1, 0.9, 1],
+    [0, 0.2, 0.8, 1],
     [0.95, 1, 1, 0.95]
   );
 
