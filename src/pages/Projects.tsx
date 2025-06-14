@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
+import MicroArtHover from "@/components/MicroArtHover";
+import FloatingOrbs from "@/components/FloatingOrbs";
 
 const Projects = () => {
   const projects = [
@@ -99,20 +101,26 @@ const Projects = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-accent/20 to-background text-foreground py-20">
-      <div className="container mx-auto px-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative">
+      <FloatingOrbs />
+      
+      <div className="container mx-auto px-6 py-20 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            All Projects
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            A comprehensive collection of my work in data analysis, machine learning, web development, and mobile applications.
-          </p>
+          <MicroArtHover variant="organic" className="inline-block">
+            <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              All Projects
+            </h1>
+          </MicroArtHover>
+          <MicroArtHover variant="shadow" className="max-w-3xl mx-auto">
+            <p className="text-xl text-slate-300">
+              A comprehensive collection of my work in data analysis, machine learning, web development, and mobile applications.
+            </p>
+          </MicroArtHover>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -123,65 +131,70 @@ const Projects = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <Card className={`bg-gradient-to-br ${project.gradient} border-border hover:border-primary/50 transition-all duration-300 group cursor-pointer h-full flex flex-col`}>
-                <div className="relative overflow-hidden rounded-t-lg">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent" />
-                </div>
-                <CardHeader className="flex-1">
-                  <div className="flex justify-between items-start mb-2">
-                    <CardTitle className="text-lg text-foreground group-hover:text-blue-400 transition-colors duration-300 leading-tight">
-                      {project.title}
-                    </CardTitle>
-                    <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded-full whitespace-nowrap ml-2">
-                      {project.date}
-                    </span>
+              <MicroArtHover 
+                variant={index % 3 === 0 ? "organic" : index % 3 === 1 ? "shadow" : "aurora"} 
+                className="h-full"
+              >
+                <Card className={`bg-gradient-to-br ${project.gradient} border-slate-700 hover:border-blue-500/50 transition-all duration-300 group cursor-pointer h-full flex flex-col backdrop-blur-sm bg-slate-800/50`}>
+                  <div className="relative overflow-hidden rounded-t-lg">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
                   </div>
-                  <CardDescription className="text-sm text-muted-foreground line-clamp-3">
-                    {project.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 bg-secondary/50 rounded-full text-xs text-secondary-foreground"
-                      >
-                        {tag}
+                  <CardHeader className="flex-1">
+                    <div className="flex justify-between items-start mb-2">
+                      <CardTitle className="text-lg text-white group-hover:text-blue-400 transition-colors duration-300 leading-tight">
+                        {project.title}
+                      </CardTitle>
+                      <span className="text-xs text-slate-400 bg-slate-700/50 px-2 py-1 rounded-full whitespace-nowrap ml-2">
+                        {project.date}
                       </span>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    {project.githubLink && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-border text-muted-foreground hover:bg-accent hover:text-foreground flex-1"
-                        onClick={() => window.open(project.githubLink, '_blank')}
-                      >
-                        <Github className="w-3 h-3 mr-1" />
-                        Code
-                      </Button>
-                    )}
-                    {project.liveLink && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="border-border text-muted-foreground hover:bg-accent hover:text-foreground flex-1"
-                        onClick={() => window.open(project.liveLink, '_blank')}
-                      >
-                        <ExternalLink className="w-3 h-3 mr-1" />
-                        Live
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                    </div>
+                    <CardDescription className="text-sm text-slate-300 line-clamp-3">
+                      {project.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-1 bg-slate-700/50 rounded-full text-xs text-slate-300"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      {project.githubLink && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white flex-1"
+                          onClick={() => window.open(project.githubLink, '_blank')}
+                        >
+                          <Github className="w-3 h-3 mr-1" />
+                          Code
+                        </Button>
+                      )}
+                      {project.liveLink && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white flex-1"
+                          onClick={() => window.open(project.liveLink, '_blank')}
+                        >
+                          <ExternalLink className="w-3 h-3 mr-1" />
+                          Live
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </MicroArtHover>
             </motion.div>
           ))}
         </div>
