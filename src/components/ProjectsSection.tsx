@@ -17,11 +17,11 @@ const ProjectsSection = () => {
     offset: ["start 80%", "end 20%"] // Start animation when MacBook enters viewport, end when it leaves
   });
 
-  // Smoother lid rotation - opens when scrolling into view, closes when scrolling out
+  // Fixed lid rotation - opens when scrolling into view, closes when scrolling out
   const lidRotation = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
-    [0, -95, -95, 0] // Slightly more open angle for better visibility
+    [-5, -95, -95, -5] // Fixed: Start closed (-5), open fully (-95), stay open, then close (-5)
   );
   
   // Smoother opacity transition
