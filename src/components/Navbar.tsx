@@ -74,7 +74,7 @@ const Navbar = () => {
             </Button>
             <div className="w-8 h-8 rounded-full overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face"
+                src="/lovable-uploads/3bb13471-a1d5-4654-b982-5fa77977faaf.png"
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
