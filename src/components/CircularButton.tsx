@@ -1,7 +1,6 @@
 
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
-import { ArrowRight } from "lucide-react";
 
 interface CircularButtonProps {
   children: React.ReactNode;
@@ -65,14 +64,13 @@ const CircularButton = ({ children, onClick, className = "" }: CircularButtonPro
       
       {/* Button content that rotates towards cursor */}
       <motion.div
-        className="relative z-10 w-full h-full flex flex-col items-center justify-center"
+        className="relative z-10 w-full h-full flex items-center justify-center"
         animate={{
           rotate: isHovered ? angle : 0,
         }}
         transition={{ type: "spring", stiffness: 100, damping: 15 }}
       >
-        <span className="text-sm text-center leading-tight mb-1">{children}</span>
-        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        <span className="text-sm text-center leading-tight">{children}</span>
       </motion.div>
       
       {/* Ring effect */}
