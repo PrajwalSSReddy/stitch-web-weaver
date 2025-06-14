@@ -20,12 +20,12 @@ const About = () => {
               className="w-full h-full object-cover"
             />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Alex Carter</h1>
+          <h1 className="text-4xl font-bold mb-4">Prajwal S S Reddy</h1>
           <p className="text-xl text-muted-foreground mb-2">
-            iOS Developer, Python Developer, UI/UX Designer, React Developer
+            iOS Developer at Cubiquitous Pvt Ltd
           </p>
           <p className="text-muted-foreground">
-            Passionate about creating intuitive and impactful digital experiences.
+            Since 2025 | Passionate about creating innovative mobile experiences
           </p>
         </motion.div>
 
@@ -42,8 +42,8 @@ const About = () => {
                   <h2 className="text-2xl font-bold text-foreground">Background</h2>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">
-                  I am a versatile developer with a strong foundation in iOS and Python, 
-                  complemented by expertise in UI/UX design and React. My goal is to craft 
+                  I am currently working as an iOS Developer at Cubiquitous Pvt Ltd since 2025, 
+                  with expertise in Python development, UI/UX design, and React. My goal is to craft 
                   seamless and engaging applications that meet user needs and exceed expectations.
                 </p>
               </CardContent>
