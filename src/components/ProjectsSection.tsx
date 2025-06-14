@@ -11,15 +11,38 @@ const ProjectsSection = () => {
   const [currentProject, setCurrentProject] = useState(0);
   const macbookRef = useRef<HTMLDivElement>(null);
 
-  // Scroll-based animations for MacBook
+  // Improved scroll-based animations for MacBook with smoother transitions
   const { scrollYProgress } = useScroll({
     target: macbookRef,
-    offset: ["start end", "end start"]
+    offset: ["start 80%", "end 20%"] // Start animation when MacBook enters viewport, end when it leaves
   });
 
-  // Transform scroll progress to rotation angle (0 to -120 degrees)
-  const lidRotation = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, -90, -90, 0]);
-  const baseOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.3, 1, 1, 0.3]);
+  // Smoother lid rotation with easing - opens when scrolling into view, closes when scrolling out
+  const lidRotation = useTransform(
+    scrollYProgress, 
+    [0, 0.2, 0.8, 1], 
+    [0, -95, -95, 0], // Slightly more open angle for better visibility
+    {
+      ease: [0.25, 0.46, 0.45, 0.94] // Custom easing for smoother animation
+    }
+  );
+  
+  // Smoother opacity transition
+  const baseOpacity = useTransform(
+    scrollYProgress, 
+    [0, 0.15, 0.85, 1], 
+    [0.4, 1, 1, 0.4],
+    {
+      ease: [0.25, 0.46, 0.45, 0.94]
+    }
+  );
+
+  // Scale animation for more dynamic effect
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.8, 1],
+    [0.95, 1, 1, 0.95]
+  );
 
   const projects = [
     {
@@ -201,28 +224,34 @@ const ProjectsSection = () => {
           </motion.div>
         </ParallaxSection>
 
-        {/* MacBook Container with Opening/Closing Animation */}
+        {/* MacBook Container with Improved Opening/Closing Animation */}
         <motion.div
           ref={macbookRef}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ 
+            duration: 0.8,
+            type: "spring",
+            stiffness: 100,
+            damping: 20
+          }}
           viewport={{ once: true }}
           className="max-w-7xl mx-auto mb-16 perspective-1000"
           style={{ 
-            perspective: '1000px',
-            opacity: baseOpacity 
+            perspective: '2000px',
+            opacity: baseOpacity,
+            scale: scale
           }}
         >
           {/* MacBook Base */}
           <div className="relative mx-auto" style={{ width: '100%', maxWidth: '1400px' }}>
-            {/* MacBook Lid (Screen) */}
+            {/* MacBook Lid (Screen) with Improved Animation */}
             <motion.div
               className={`relative ${
                 isDark 
                   ? "bg-gradient-to-br from-slate-700 to-slate-800" 
                   : "bg-gradient-to-br from-slate-200 to-slate-300"
-              } shadow-2xl`}
+              } shadow-2xl transition-all duration-700 ease-out`}
               style={{
                 width: '100%',
                 aspectRatio: '14/9',
@@ -230,14 +259,15 @@ const ProjectsSection = () => {
                 padding: '8px',
                 transformOrigin: 'bottom center',
                 rotateX: lidRotation,
-                transformStyle: 'preserve-3d'
+                transformStyle: 'preserve-3d',
+                transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               }}
             >
               {/* MacBook Screen */}
               <div 
                 className={`relative overflow-hidden ${
                   isDark ? "bg-slate-900" : "bg-white"
-                } shadow-inner`}
+                } shadow-inner transition-all duration-500`}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -451,7 +481,7 @@ const ProjectsSection = () => {
               isDark 
                 ? "bg-gradient-to-b from-slate-700 to-slate-800" 
                 : "bg-gradient-to-b from-slate-200 to-slate-300"
-            } shadow-lg`} 
+            } shadow-lg transition-all duration-500`} 
             style={{
               width: '100%',
               maxWidth: '1400px',
