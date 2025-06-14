@@ -1,11 +1,10 @@
-
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Code, ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import MicroArtHover from "./MicroArtHover";
 import ParallaxSection from "./ParallaxSection";
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import type { CarouselApi } from "@/components/ui/carousel";
 
 const ProjectsSection = () => {
@@ -174,20 +173,29 @@ const ProjectsSection = () => {
     }
   ];
 
-  const handlePrevProject = () => {
-    console.log("Previous button clicked");
-    api?.scrollPrev();
-  };
+  const handlePrevProject = useCallback(() => {
+    console.log("Previous button clicked, API exists:", !!api);
+    if (api) {
+      api.scrollPrev();
+      console.log("ScrollPrev called");
+    }
+  }, [api]);
 
-  const handleNextProject = () => {
-    console.log("Next button clicked");
-    api?.scrollNext();
-  };
+  const handleNextProject = useCallback(() => {
+    console.log("Next button clicked, API exists:", !!api);
+    if (api) {
+      api.scrollNext();
+      console.log("ScrollNext called");
+    }
+  }, [api]);
 
-  const handleProjectSelect = (index: number) => {
-    console.log("Project selected:", index);
-    api?.scrollTo(index);
-  };
+  const handleProjectSelect = useCallback((index: number) => {
+    console.log("Project selected:", index, "API exists:", !!api);
+    if (api) {
+      api.scrollTo(index);
+      console.log("ScrollTo called with index:", index);
+    }
+  }, [api]);
 
   const currentProjectData = projects[currentProject];
 
@@ -302,20 +310,18 @@ const ProjectsSection = () => {
                 
                 {/* Navigation Controls */}
                 <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between">
-                  <motion.button
+                  <button
                     onClick={handlePrevProject}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     className={`w-12 h-12 rounded-full ${
                       isDark 
                         ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
                         : "bg-white/90 text-slate-600 hover:bg-slate-100"
                     } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
                       isDark ? "border-slate-700" : "border-slate-200"
-                    }`}
+                    } hover:scale-110 active:scale-95`}
                   >
                     <ChevronLeft className="w-6 h-6" />
-                  </motion.button>
+                  </button>
 
                   {/* Project Counter */}
                   <div className={`px-6 py-3 rounded-full ${
@@ -328,20 +334,18 @@ const ProjectsSection = () => {
                     {currentProject + 1} / {projects.length}
                   </div>
 
-                  <motion.button
+                  <button
                     onClick={handleNextProject}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     className={`w-12 h-12 rounded-full ${
                       isDark 
                         ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
                         : "bg-white/90 text-slate-600 hover:bg-slate-100"
                     } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
                     isDark ? "border-slate-700" : "border-slate-200"
-                  }`}
+                  } hover:scale-110 active:scale-95`}
                   >
                     <ChevronRight className="w-6 h-6" />
-                  </motion.button>
+                  </button>
                 </div>
 
                 {/* Carousel for Project Content */}
