@@ -1,6 +1,5 @@
-
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Code, ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
+import { Code, ExternalLink, Github, ChevronLeft, ChevronRight, Smartphone } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import MicroArtHover from "./MicroArtHover";
 import ParallaxSection from "./ParallaxSection";
@@ -13,7 +12,19 @@ const ProjectsSection = () => {
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
   const [currentProject, setCurrentProject] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
+  const [isMobile, setIsMobile] = useState(false);
   const macbookRef = useRef<HTMLDivElement>(null);
+
+  // Check if mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Fixed scroll-based animations for MacBook with proper opening timing
   const { scrollYProgress } = useScroll({
@@ -218,6 +229,384 @@ const ProjectsSection = () => {
 
   const currentProjectData = projects[currentProject];
 
+  const MobileDeviceFrame = ({ children }: { children: React.ReactNode }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ 
+        duration: 0.8,
+        type: "spring",
+        stiffness: 100,
+        damping: 20
+      }}
+      viewport={{ once: true }}
+      className="relative mx-auto"
+      style={{ width: '100%', maxWidth: '400px' }}
+    >
+      {/* Mobile Frame */}
+      <div className={`relative ${
+        isDark 
+          ? "bg-gradient-to-br from-slate-700 to-slate-800" 
+          : "bg-gradient-to-br from-slate-200 to-slate-300"
+      } shadow-2xl transition-all duration-700 ease-out`}
+      style={{
+        width: '100%',
+        aspectRatio: '9/16',
+        borderRadius: '32px',
+        padding: '12px',
+      }}>
+        {/* Mobile Screen */}
+        <div 
+          className={`relative overflow-hidden ${
+            isDark ? "bg-slate-900" : "bg-white"
+          } shadow-inner transition-all duration-500`}
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '24px',
+          }}
+        >
+          {/* Screen Bezel */}
+          <div className={`absolute inset-0 border-2 ${
+            isDark ? "border-slate-800" : "border-slate-100"
+          } pointer-events-none z-10`} 
+          style={{ borderRadius: '24px' }} />
+          
+          {/* Notch */}
+          <div className={`absolute top-2 left-1/2 transform -translate-x-1/2 w-20 h-6 ${
+            isDark ? "bg-slate-800" : "bg-slate-200"
+          } z-20`}
+          style={{ borderRadius: '0 0 16px 16px' }} />
+          
+          {children}
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  const LaptopDeviceFrame = ({ children }: { children: React.ReactNode }) => (
+    <motion.div
+      ref={macbookRef}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ 
+        duration: 0.8,
+        type: "spring",
+        stiffness: 100,
+        damping: 20
+      }}
+      viewport={{ once: true }}
+      className="max-w-7xl mx-auto mb-16 perspective-1000 relative"
+      style={{ 
+        perspective: '2000px',
+        opacity: baseOpacity,
+        scale: scale
+      }}
+    >
+      {/* MacBook Base */}
+      <div className="relative mx-auto" style={{ width: '100%', maxWidth: '1400px' }}>
+        {/* MacBook Lid (Screen) with Improved Animation */}
+        <motion.div
+          className={`relative ${
+            isDark 
+              ? "bg-gradient-to-br from-slate-700 to-slate-800" 
+              : "bg-gradient-to-br from-slate-200 to-slate-300"
+          } shadow-2xl transition-all duration-700 ease-out`}
+          style={{
+            width: '100%',
+            aspectRatio: '14/9',
+            borderRadius: '24px',
+            padding: '8px',
+            transformOrigin: 'bottom center',
+            rotateX: lidRotation,
+            transformStyle: 'preserve-3d',
+            transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          }}
+        >
+          {/* MacBook Screen */}
+          <div 
+            className={`relative overflow-hidden ${
+              isDark ? "bg-slate-900" : "bg-white"
+            } shadow-inner transition-all duration-500`}
+            style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: '20px',
+            }}
+          >
+            {/* Screen Bezel */}
+            <div className={`absolute inset-0 border-4 ${
+              isDark ? "border-slate-800" : "border-slate-100"
+            } pointer-events-none z-10`} 
+            style={{ borderRadius: '20px' }} />
+            
+            {children}
+          </div>
+        </motion.div>
+
+        {/* MacBook Base/Keyboard */}
+        <div className={`mt-2 h-4 mx-auto ${
+          isDark 
+            ? "bg-gradient-to-b from-slate-700 to-slate-800" 
+            : "bg-gradient-to-b from-slate-200 to-slate-300"
+        } shadow-lg transition-all duration-500`} 
+        style={{
+          width: '100%',
+          maxWidth: '1400px',
+          borderRadius: '0 0 24px 24px',
+        }} />
+      </div>
+    </motion.div>
+  );
+
+  const DeviceContent = () => (
+    <>
+      {/* Navigation Controls */}
+      <div className={`absolute ${isMobile ? 'top-12' : 'top-4'} left-4 right-4 z-20 flex items-center justify-between`}>
+        <button
+          onClick={handlePrevProject}
+          className={`${isMobile ? 'w-10 h-10' : 'w-12 h-12'} rounded-full ${
+            isDark 
+              ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
+              : "bg-white/90 text-slate-600 hover:bg-slate-100"
+          } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
+            isDark ? "border-slate-700" : "border-slate-200"
+          } hover:scale-110 active:scale-95`}
+        >
+          <ChevronLeft className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
+        </button>
+
+        {/* Project Counter */}
+        <div className={`${isMobile ? 'px-3 py-2 text-sm' : 'px-6 py-3'} rounded-full ${
+          isDark 
+            ? "bg-slate-800/90 text-slate-300" 
+            : "bg-white/90 text-slate-600"
+        } backdrop-blur-sm font-medium shadow-lg border ${
+          isDark ? "border-slate-700" : "border-slate-200"
+        }`}>
+          {currentProject + 1} / {projects.length}
+        </div>
+
+        <button
+          onClick={handleNextProject}
+          className={`${isMobile ? 'w-10 h-10' : 'w-12 h-12'} rounded-full ${
+            isDark 
+              ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
+              : "bg-white/90 text-slate-600 hover:bg-slate-100"
+          } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
+          isDark ? "border-slate-700" : "border-slate-200"
+        } hover:scale-110 active:scale-95`}
+        >
+          <ChevronRight className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'}`} />
+        </button>
+      </div>
+
+      {/* Carousel for Project Content */}
+      <Carousel 
+        className="w-full h-full"
+        setApi={setApi}
+        opts={{
+          align: "start",
+          loop: true,
+          skipSnaps: false,
+          dragFree: false,
+          watchDrag: true, // Enable drag/swipe
+        }}
+      >
+        <CarouselContent className="h-full -ml-0">
+          {projects.map((project, index) => (
+            <CarouselItem key={index} className="h-full pl-0">
+              <motion.div 
+                className="relative w-full h-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: currentProject === index ? 1 : 0.3 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              >
+                {/* Browser Chrome - Hide on mobile for more space */}
+                {!isMobile && (
+                  <div className={`flex items-center justify-between px-6 py-4 ${
+                    isDark ? "bg-slate-800 border-b border-slate-700" : "bg-slate-100 border-b border-slate-200"
+                  }`}>
+                    {/* Traffic Lights */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 rounded-full bg-red-500 shadow-sm" />
+                      <div className="w-4 h-4 rounded-full bg-yellow-500 shadow-sm" />
+                      <div className="w-4 h-4 rounded-full bg-green-500 shadow-sm" />
+                    </div>
+
+                    {/* URL Bar */}
+                    <div className={`flex-1 mx-6 px-4 py-3 rounded-lg ${
+                      isDark ? "bg-slate-700 text-slate-300" : "bg-white text-slate-600"
+                    } font-mono text-sm truncate border ${
+                      isDark ? "border-slate-600" : "border-slate-300"
+                    }`}>
+                      {project.liveUrl}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3">
+                      {project.githubUrl && (
+                        <motion.a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className={`w-10 h-10 rounded-full ${
+                            isDark 
+                              ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
+                              : "bg-white text-slate-600 hover:bg-slate-50"
+                          } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
+                            isDark ? "border-slate-600" : "border-slate-200"
+                          }`}
+                        >
+                          <Github className="w-5 h-5" />
+                        </motion.a>
+                      )}
+                      <motion.a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className={`w-10 h-10 rounded-full ${
+                          isDark 
+                            ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
+                            : "bg-white text-slate-600 hover:bg-slate-50"
+                        } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
+                          isDark ? "border-slate-600" : "border-slate-200"
+                        }`}
+                      >
+                        <ExternalLink className="w-5 h-5" />
+                      </motion.a>
+                    </div>
+                  </div>
+                )}
+
+                {/* Project Visualization */}
+                <div className="relative" style={{ height: isMobile ? '100%' : 'calc(100% - 80px)' }}>
+                  {/* Project Image/Preview with Fade Animation */}
+                  <motion.div 
+                    className="relative w-full h-full overflow-hidden"
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    key={project.title}
+                  >
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
+                    
+                    {/* Overlay with project details */}
+                    <motion.div 
+                      className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4 md:p-8"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                    >
+                      <div className="text-white">
+                        <motion.div 
+                          className="flex items-center justify-between mb-4"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.3 }}
+                        >
+                          <h3 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold`}>
+                            {project.title}
+                          </h3>
+                          <span className={`${isMobile ? 'text-xs px-3 py-1' : 'text-sm px-4 py-2'} rounded-full bg-white/20 backdrop-blur-sm border border-white/30`}>
+                            {project.date}
+                          </span>
+                        </motion.div>
+                        
+                        <motion.p 
+                          className={`text-white/90 mb-4 md:mb-6 ${isMobile ? 'text-sm' : 'text-lg'} leading-relaxed max-w-4xl`}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.4 }}
+                        >
+                          {project.description}
+                        </motion.p>
+                        
+                        <motion.div 
+                          className="flex flex-wrap gap-2 mb-4 md:mb-6"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.5 }}
+                        >
+                          {project.technologies.slice(0, isMobile ? 3 : 6).map((tech, techIndex) => (
+                            <span
+                              key={techIndex}
+                              className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm'} rounded-full font-medium bg-blue-500/30 text-blue-200 border border-blue-400/50 backdrop-blur-sm`}
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                          {project.technologies.length > (isMobile ? 3 : 6) && (
+                            <span className={`${isMobile ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm'} rounded-full text-blue-200`}>
+                              +{project.technologies.length - (isMobile ? 3 : 6)}
+                            </span>
+                          )}
+                        </motion.div>
+                        
+                        {/* Action Buttons */}
+                        <motion.div 
+                          className={`flex ${isMobile ? 'gap-2' : 'gap-4'}`}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.6 }}
+                        >
+                          {project.githubUrl && (
+                            <motion.a
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`${isMobile ? 'px-3 py-2 text-sm' : 'px-6 py-3'} rounded-lg bg-slate-800/50 text-white border border-slate-600 hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2`}
+                            >
+                              <Github className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                              {!isMobile && 'View Code'}
+                            </motion.a>
+                          )}
+                          <motion.a
+                            href={project.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`${isMobile ? 'px-3 py-2 text-sm' : 'px-6 py-3'} rounded-lg bg-blue-600/80 text-white border border-blue-500 hover:bg-blue-700/80 transition-all duration-300 flex items-center gap-2`}
+                          >
+                            <ExternalLink className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
+                            {!isMobile && (project.type === 'github' ? 'View Repository' : 'Visit Project')}
+                          </motion.a>
+                        </motion.div>
+                      </div>
+                    </motion.div>
+
+                    {/* Featured Badge */}
+                    {project.featured && (
+                      <motion.div 
+                        className={`absolute ${isMobile ? 'top-16' : 'top-6'} left-4 md:left-6 ${isMobile ? 'px-3 py-1 text-xs' : 'px-4 py-2'} rounded-full bg-yellow-500/30 text-yellow-300 border border-yellow-400/50 backdrop-blur-sm`}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5, delay: 0.7 }}
+                      >
+                        <span className="font-medium">Featured</span>
+                      </motion.div>
+                    )}
+                  </motion.div>
+                </div>
+              </motion.div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+    </>
+  );
+
   return (
     <section className={`py-20 relative min-h-screen ${
       isDark 
@@ -248,7 +637,11 @@ const ProjectsSection = () => {
                     ? "bg-gradient-to-r from-blue-500/20 to-purple-500/20" 
                     : "bg-gradient-to-r from-blue-500/10 to-purple-500/10"
                 }`}>
-                  <Code className={`w-8 h-8 ${isDark ? "text-blue-400" : "text-blue-600"}`} />
+                  {isMobile ? (
+                    <Smartphone className={`w-8 h-8 ${isDark ? "text-blue-400" : "text-blue-600"}`} />
+                  ) : (
+                    <Code className={`w-8 h-8 ${isDark ? "text-blue-400" : "text-blue-600"}`} />
+                  )}
                 </div>
                 <h2 className={`text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent`}>
                   Projects
@@ -271,270 +664,16 @@ const ProjectsSection = () => {
           </motion.div>
         </ParallaxSection>
 
-        {/* MacBook Container with Carousel */}
-        <motion.div
-          ref={macbookRef}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ 
-            duration: 0.8,
-            type: "spring",
-            stiffness: 100,
-            damping: 20
-          }}
-          viewport={{ once: true }}
-          className="max-w-7xl mx-auto mb-16 perspective-1000 relative"
-          style={{ 
-            perspective: '2000px',
-            opacity: baseOpacity,
-            scale: scale
-          }}
-        >
-          {/* MacBook Base */}
-          <div className="relative mx-auto" style={{ width: '100%', maxWidth: '1400px' }}>
-            {/* MacBook Lid (Screen) with Improved Animation */}
-            <motion.div
-              className={`relative ${
-                isDark 
-                  ? "bg-gradient-to-br from-slate-700 to-slate-800" 
-                  : "bg-gradient-to-br from-slate-200 to-slate-300"
-              } shadow-2xl transition-all duration-700 ease-out`}
-              style={{
-                width: '100%',
-                aspectRatio: '14/9',
-                borderRadius: '24px',
-                padding: '8px',
-                transformOrigin: 'bottom center',
-                rotateX: lidRotation,
-                transformStyle: 'preserve-3d',
-                transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-              }}
-            >
-              {/* MacBook Screen */}
-              <div 
-                className={`relative overflow-hidden ${
-                  isDark ? "bg-slate-900" : "bg-white"
-                } shadow-inner transition-all duration-500`}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '20px',
-                }}
-              >
-                {/* Screen Bezel */}
-                <div className={`absolute inset-0 border-4 ${
-                  isDark ? "border-slate-800" : "border-slate-100"
-                } pointer-events-none z-10`} 
-                style={{ borderRadius: '20px' }} />
-                
-                {/* Navigation Controls */}
-                <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between">
-                  <button
-                    onClick={handlePrevProject}
-                    className={`w-12 h-12 rounded-full ${
-                      isDark 
-                        ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
-                        : "bg-white/90 text-slate-600 hover:bg-slate-100"
-                    } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
-                      isDark ? "border-slate-700" : "border-slate-200"
-                    } hover:scale-110 active:scale-95`}
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
-
-                  {/* Project Counter */}
-                  <div className={`px-6 py-3 rounded-full ${
-                    isDark 
-                      ? "bg-slate-800/90 text-slate-300" 
-                      : "bg-white/90 text-slate-600"
-                  } backdrop-blur-sm font-medium shadow-lg border ${
-                    isDark ? "border-slate-700" : "border-slate-200"
-                  }`}>
-                    {currentProject + 1} / {projects.length}
-                  </div>
-
-                  <button
-                    onClick={handleNextProject}
-                    className={`w-12 h-12 rounded-full ${
-                      isDark 
-                        ? "bg-slate-800/90 text-slate-300 hover:bg-slate-700" 
-                        : "bg-white/90 text-slate-600 hover:bg-slate-100"
-                    } backdrop-blur-sm flex items-center justify-center transition-all duration-300 shadow-lg border ${
-                    isDark ? "border-slate-700" : "border-slate-200"
-                  } hover:scale-110 active:scale-95`}
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
-                </div>
-
-                {/* Carousel for Project Content */}
-                <Carousel 
-                  className="w-full h-full"
-                  setApi={setApi}
-                  opts={{
-                    align: "start",
-                    loop: true,
-                    skipSnaps: false,
-                    dragFree: false,
-                  }}
-                >
-                  <CarouselContent className="h-full -ml-0">
-                    {projects.map((project, index) => (
-                      <CarouselItem key={index} className="h-full pl-0">
-                        <div className="relative w-full h-full">
-                          {/* Browser Chrome */}
-                          <div className={`flex items-center justify-between px-6 py-4 ${
-                            isDark ? "bg-slate-800 border-b border-slate-700" : "bg-slate-100 border-b border-slate-200"
-                          }`}>
-                            {/* Traffic Lights */}
-                            <div className="flex items-center gap-3">
-                              <div className="w-4 h-4 rounded-full bg-red-500 shadow-sm" />
-                              <div className="w-4 h-4 rounded-full bg-yellow-500 shadow-sm" />
-                              <div className="w-4 h-4 rounded-full bg-green-500 shadow-sm" />
-                            </div>
-
-                            {/* URL Bar */}
-                            <div className={`flex-1 mx-6 px-4 py-3 rounded-lg ${
-                              isDark ? "bg-slate-700 text-slate-300" : "bg-white text-slate-600"
-                            } font-mono text-sm truncate border ${
-                              isDark ? "border-slate-600" : "border-slate-300"
-                            }`}>
-                              {project.liveUrl}
-                            </div>
-
-                            {/* Action Buttons */}
-                            <div className="flex gap-3">
-                              {project.githubUrl && (
-                                <motion.a
-                                  href={project.githubUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.9 }}
-                                  className={`w-10 h-10 rounded-full ${
-                                    isDark 
-                                      ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
-                                      : "bg-white text-slate-600 hover:bg-slate-50"
-                                  } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
-                                    isDark ? "border-slate-600" : "border-slate-200"
-                                  }`}
-                                >
-                                  <Github className="w-5 h-5" />
-                                </motion.a>
-                              )}
-                              <motion.a
-                                href={project.liveUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                className={`w-10 h-10 rounded-full ${
-                                  isDark 
-                                    ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
-                                    : "bg-white text-slate-600 hover:bg-slate-50"
-                                } flex items-center justify-center transition-colors duration-300 shadow-sm border ${
-                                  isDark ? "border-slate-600" : "border-slate-200"
-                                }`}
-                              >
-                                <ExternalLink className="w-5 h-5" />
-                              </motion.a>
-                            </div>
-                          </div>
-
-                          {/* Project Visualization */}
-                          <div className="relative" style={{ height: 'calc(100% - 80px)' }}>
-                            {/* Project Image/Preview */}
-                            <div className="relative w-full h-full overflow-hidden">
-                              <img
-                                src={project.image}
-                                alt={project.title}
-                                className="w-full h-full object-cover"
-                              />
-                              
-                              {/* Overlay with project details */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
-                                <div className="text-white">
-                                  <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-3xl font-bold">
-                                      {project.title}
-                                    </h3>
-                                    <span className="text-sm px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
-                                      {project.date}
-                                    </span>
-                                  </div>
-                                  <p className="text-white/90 mb-6 text-lg leading-relaxed max-w-4xl">
-                                    {project.description}
-                                  </p>
-                                  <div className="flex flex-wrap gap-3 mb-6">
-                                    {project.technologies.map((tech, techIndex) => (
-                                      <span
-                                        key={techIndex}
-                                        className="px-4 py-2 rounded-full text-sm font-medium bg-blue-500/30 text-blue-200 border border-blue-400/50 backdrop-blur-sm"
-                                      >
-                                        {tech}
-                                      </span>
-                                    ))}
-                                  </div>
-                                  
-                                  {/* Action Buttons */}
-                                  <div className="flex gap-4">
-                                    {project.githubUrl && (
-                                      <motion.a
-                                        href={project.githubUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="px-6 py-3 rounded-lg bg-slate-800/50 text-white border border-slate-600 hover:bg-slate-700/50 transition-all duration-300 flex items-center gap-2"
-                                      >
-                                        <Github className="w-5 h-5" />
-                                        View Code
-                                      </motion.a>
-                                    )}
-                                    <motion.a
-                                      href={project.liveUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      whileHover={{ scale: 1.05 }}
-                                      whileTap={{ scale: 0.95 }}
-                                      className="px-6 py-3 rounded-lg bg-blue-600/80 text-white border border-blue-500 hover:bg-blue-700/80 transition-all duration-300 flex items-center gap-2"
-                                    >
-                                      <ExternalLink className="w-5 h-5" />
-                                      {project.type === 'github' ? 'View Repository' : 'Visit Project'}
-                                    </motion.a>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Featured Badge */}
-                              {project.featured && (
-                                <div className="absolute top-6 left-6 px-4 py-2 rounded-full bg-yellow-500/30 text-yellow-300 border border-yellow-400/50 backdrop-blur-sm">
-                                  <span className="text-sm font-medium">Featured</span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                </Carousel>
-              </div>
-            </motion.div>
-
-            {/* MacBook Base/Keyboard */}
-            <div className={`mt-2 h-4 mx-auto ${
-              isDark 
-                ? "bg-gradient-to-b from-slate-700 to-slate-800" 
-                : "bg-gradient-to-b from-slate-200 to-slate-300"
-            } shadow-lg transition-all duration-500`} 
-            style={{
-              width: '100%',
-              maxWidth: '1400px',
-              borderRadius: '0 0 24px 24px',
-            }} />
-          </div>
-        </motion.div>
+        {/* Device Container with Carousel - Responsive Design */}
+        {isMobile ? (
+          <MobileDeviceFrame>
+            <DeviceContent />
+          </MobileDeviceFrame>
+        ) : (
+          <LaptopDeviceFrame>
+            <DeviceContent />
+          </LaptopDeviceFrame>
+        )}
 
         {/* Project List */}
         <motion.div
@@ -542,7 +681,7 @@ const ProjectsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="max-w-7xl mx-auto"
+          className="max-w-7xl mx-auto mt-16"
         >
           <h3 className={`text-3xl font-bold text-center mb-12 ${
             isDark ? "text-white" : "text-slate-900"
@@ -550,13 +689,16 @@ const ProjectsSection = () => {
             All Projects
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${isMobile ? 'gap-3' : 'xl:grid-cols-5 gap-4'}`}>
             {projects.map((project, index) => (
               <motion.button
                 key={index}
                 onClick={() => handleProjectSelect(index)}
                 whileHover={{ scale: 1.03, y: -5 }}
                 whileTap={{ scale: 0.98 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 className={`p-4 rounded-xl text-left transition-all duration-300 ${
                   currentProject === index
                     ? (isDark 
