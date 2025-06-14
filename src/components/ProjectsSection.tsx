@@ -1,9 +1,10 @@
+
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Code, ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import MicroArtHover from "./MicroArtHover";
 import ParallaxSection from "./ParallaxSection";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import type { CarouselApi } from "@/components/ui/carousel";
 
@@ -17,14 +18,14 @@ const ProjectsSection = () => {
   // Fixed scroll-based animations for MacBook with proper opening timing
   const { scrollYProgress } = useScroll({
     target: macbookRef,
-    offset: ["start 90%", "end -20%"] // Extended range to include projects list
+    offset: ["start 90%", "end -50%"] // Extended range to include projects list
   });
 
   // Modified lid rotation - starts open, closes when visible, fully closes when projects list visible
   const lidRotation = useTransform(
     scrollYProgress, 
-    [0, 0.15, 0.6, 1], 
-    [-90, -10, 0, 0] // Start open (-90), close when visible (-10), fully close when projects visible (0)
+    [0, 0.15, 0.8, 1], 
+    [-90, -10, 90, 90] // Start open (-90), close when visible (-10), fully close when projects visible (90)
   );
   
   // Smoother opacity transition
@@ -45,15 +46,20 @@ const ProjectsSection = () => {
   const onSelect = useCallback(() => {
     if (!api) return;
     setCurrentProject(api.selectedScrollSnap());
+    console.log("Project changed to:", api.selectedScrollSnap());
   }, [api]);
 
   // Set up carousel API
-  const setCarouselApi = useCallback((carouselApi: CarouselApi) => {
-    setApi(carouselApi);
-    if (carouselApi) {
-      carouselApi.on("select", onSelect);
-    }
-  }, [onSelect]);
+  useEffect(() => {
+    if (!api) return;
+
+    setCurrentProject(api.selectedScrollSnap());
+    api.on("select", onSelect);
+
+    return () => {
+      api?.off("select", onSelect);
+    };
+  }, [api, onSelect]);
 
   const projects = [
     {
@@ -169,14 +175,17 @@ const ProjectsSection = () => {
   ];
 
   const handlePrevProject = () => {
+    console.log("Previous button clicked");
     api?.scrollPrev();
   };
 
   const handleNextProject = () => {
+    console.log("Next button clicked");
     api?.scrollNext();
   };
 
   const handleProjectSelect = (index: number) => {
+    console.log("Project selected:", index);
     api?.scrollTo(index);
   };
 
@@ -247,7 +256,7 @@ const ProjectsSection = () => {
             damping: 20
           }}
           viewport={{ once: true }}
-          className="max-w-7xl mx-auto mb-16 perspective-1000"
+          className="max-w-7xl mx-auto mb-16 perspective-1000 relative"
           style={{ 
             perspective: '2000px',
             opacity: baseOpacity,
@@ -338,15 +347,17 @@ const ProjectsSection = () => {
                 {/* Carousel for Project Content */}
                 <Carousel 
                   className="w-full h-full"
-                  setApi={setCarouselApi}
+                  setApi={setApi}
                   opts={{
                     align: "start",
                     loop: true,
+                    skipSnaps: false,
+                    dragFree: false,
                   }}
                 >
-                  <CarouselContent className="h-full">
+                  <CarouselContent className="h-full -ml-0">
                     {projects.map((project, index) => (
-                      <CarouselItem key={index} className="h-full">
+                      <CarouselItem key={index} className="h-full pl-0">
                         <div className="relative w-full h-full">
                           {/* Browser Chrome */}
                           <div className={`flex items-center justify-between px-6 py-4 ${
