@@ -1,5 +1,3 @@
-
-
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Code, ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
@@ -16,27 +14,27 @@ const ProjectsSection = () => {
   // Fixed scroll-based animations for MacBook with proper opening timing
   const { scrollYProgress } = useScroll({
     target: macbookRef,
-    offset: ["start 80%", "end 20%"] // Better range for animation
+    offset: ["start 90%", "end -20%"] // Extended range to include projects list
   });
 
-  // Reversed lid rotation - starts open, closes when visible, then opens again
+  // Modified lid rotation - starts open, closes when visible, fully closes when projects list visible
   const lidRotation = useTransform(
     scrollYProgress, 
-    [0, 0.2, 0.8, 1], 
-    [-90, -10, -10, -90] // Reversed: start open (-90), close when visible (-10), stay closed, then open again
+    [0, 0.15, 0.6, 1], 
+    [-90, -10, 0, 0] // Start open (-90), close when visible (-10), fully close when projects visible (0)
   );
   
   // Smoother opacity transition
   const baseOpacity = useTransform(
     scrollYProgress, 
-    [0, 0.2, 0.8, 1], 
+    [0, 0.15, 0.85, 1], 
     [0.4, 1, 1, 0.4]
   );
 
   // Scale animation for more dynamic effect
   const scale = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.8, 1],
+    [0, 0.15, 0.85, 1],
     [0.95, 1, 1, 0.95]
   );
 
