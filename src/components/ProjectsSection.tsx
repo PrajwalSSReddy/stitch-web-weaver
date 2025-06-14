@@ -1,6 +1,6 @@
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Code, ExternalLink, Github, X } from "lucide-react";
+import { Code, ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import MicroArtHover from "./MicroArtHover";
 import ParallaxSection from "./ParallaxSection";
@@ -9,7 +9,7 @@ import { useState } from "react";
 const ProjectsSection = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-  const [openProject, setOpenProject] = useState<number | null>(null);
+  const [currentProject, setCurrentProject] = useState(0);
 
   const projects = [
     {
@@ -124,9 +124,19 @@ const ProjectsSection = () => {
     }
   ];
 
-  const handleProjectClick = (index: number) => {
-    setOpenProject(openProject === index ? null : index);
+  const handlePrevProject = () => {
+    setCurrentProject((prev) => prev === 0 ? projects.length - 1 : prev - 1);
   };
+
+  const handleNextProject = () => {
+    setCurrentProject((prev) => prev === projects.length - 1 ? 0 : prev + 1);
+  };
+
+  const handleProjectSelect = (index: number) => {
+    setCurrentProject(index);
+  };
+
+  const currentProjectData = projects[currentProject];
 
   return (
     <section className={`py-20 relative ${
@@ -181,223 +191,290 @@ const ProjectsSection = () => {
           </motion.div>
         </ParallaxSection>
 
-        {/* Projects Grid */}
+        {/* MacBook Container */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="max-w-4xl mx-auto mb-16"
         >
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="group cursor-pointer"
-            >
-              {/* MacBook Container */}
-              <div className="relative">
-                {/* MacBook Base */}
-                <motion.div
-                  className={`relative rounded-2xl ${
+          {/* MacBook Base */}
+          <motion.div
+            className={`relative rounded-3xl ${
+              isDark 
+                ? "bg-gradient-to-br from-slate-700 to-slate-800" 
+                : "bg-gradient-to-br from-slate-200 to-slate-300"
+            } p-2 shadow-2xl`}
+            whileHover={{ scale: 1.01 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* MacBook Screen */}
+            <div className={`relative rounded-2xl overflow-hidden ${
+              isDark ? "bg-slate-900" : "bg-white"
+            } shadow-inner`}>
+              {/* Screen Bezel */}
+              <div className={`absolute inset-0 rounded-2xl border-4 ${
+                isDark ? "border-slate-800" : "border-slate-100"
+              } pointer-events-none z-10`} />
+              
+              {/* Navigation Controls */}
+              <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between">
+                <button
+                  onClick={handlePrevProject}
+                  className={`w-10 h-10 rounded-full ${
                     isDark 
-                      ? "bg-gradient-to-br from-slate-700 to-slate-800" 
-                      : "bg-gradient-to-br from-slate-200 to-slate-300"
-                  } p-1 shadow-2xl`}
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
+                      ? "bg-slate-800/80 text-slate-300 hover:bg-slate-700" 
+                      : "bg-white/80 text-slate-600 hover:bg-slate-100"
+                  } backdrop-blur-sm flex items-center justify-center transition-colors duration-300 shadow-lg`}
                 >
-                  {/* MacBook Screen */}
-                  <motion.div
-                    className={`relative rounded-xl overflow-hidden ${
-                      isDark ? "bg-slate-900" : "bg-white"
-                    } shadow-inner`}
-                    onClick={() => handleProjectClick(index)}
-                  >
-                    {/* Screen Bezel */}
-                    <div className={`absolute inset-0 rounded-xl border-2 ${
-                      isDark ? "border-slate-800" : "border-slate-100"
-                    } pointer-events-none z-10`} />
-                    
-                    {/* Closed State - Project Preview */}
-                    <AnimatePresence mode="wait">
-                      {openProject !== index && (
-                        <motion.div
-                          initial={{ opacity: 1 }}
-                          exit={{ opacity: 0, rotateX: -90 }}
-                          transition={{ duration: 0.6 }}
-                          className="relative h-64 overflow-hidden"
-                        >
-                          <img
-                            src={project.image}
-                            alt={project.title}
-                            className="w-full h-full object-cover"
-                          />
-                          <div className={`absolute inset-0 ${
-                            isDark 
-                              ? "bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" 
-                              : "bg-gradient-to-t from-slate-100/80 via-transparent to-transparent"
-                          }`} />
-                          
-                          {/* Project Info Overlay */}
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <h3 className={`text-lg font-bold ${
-                                isDark ? "text-white" : "text-slate-900"
-                              }`}>
-                                {project.title}
-                              </h3>
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                isDark ? "bg-slate-800 text-slate-300" : "bg-slate-200 text-slate-600"
-                              }`}>
-                                {project.date}
-                              </span>
-                            </div>
-                            <p className={`text-sm ${
-                              isDark ? "text-slate-300" : "text-slate-600"
-                            }`}>
-                              {project.description.substring(0, 100)}...
-                            </p>
-                          </div>
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
 
-                          {/* Featured Badge */}
-                          {project.featured && (
-                            <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-400/30 backdrop-blur-sm">
-                              <span className="text-xs font-medium">Featured</span>
-                            </div>
-                          )}
-
-                          {/* Click to Open Indicator */}
-                          <div className="absolute top-4 right-4 flex items-center gap-2">
-                            <div className={`w-3 h-3 rounded-full ${
-                              isDark ? "bg-green-400" : "bg-green-500"
-                            } animate-pulse`} />
-                            <span className={`text-xs ${
-                              isDark ? "text-slate-400" : "text-slate-500"
-                            }`}>
-                              Click to open
-                            </span>
-                          </div>
-                        </motion.div>
-                      )}
-
-                      {/* Open State - Live Website */}
-                      {openProject === index && (
-                        <motion.div
-                          initial={{ opacity: 0, rotateX: 90 }}
-                          animate={{ opacity: 1, rotateX: 0 }}
-                          transition={{ duration: 0.6 }}
-                          className="relative h-80"
-                        >
-                          {/* Browser Chrome */}
-                          <div className={`flex items-center justify-between px-4 py-2 ${
-                            isDark ? "bg-slate-800 border-b border-slate-700" : "bg-slate-100 border-b border-slate-200"
-                          }`}>
-                            {/* Traffic Lights */}
-                            <div className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full bg-red-500" />
-                              <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                              <div className="w-3 h-3 rounded-full bg-green-500" />
-                            </div>
-
-                            {/* URL Bar */}
-                            <div className={`flex-1 mx-4 px-3 py-1 rounded-md ${
-                              isDark ? "bg-slate-700 text-slate-300" : "bg-white text-slate-600"
-                            } text-xs font-mono truncate`}>
-                              {project.liveUrl}
-                            </div>
-
-                            {/* Close Button */}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenProject(null);
-                              }}
-                              className={`p-1 rounded-md hover:bg-slate-600 transition-colors ${
-                                isDark ? "text-slate-400 hover:text-white" : "text-slate-500 hover:text-slate-900"
-                              }`}
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-
-                          {/* Embedded Website */}
-                          <div className="h-full">
-                            <iframe
-                              src={project.liveUrl}
-                              title={project.title}
-                              className="w-full h-full border-0"
-                              sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-top-navigation"
-                            />
-                          </div>
-
-                          {/* Action Buttons */}
-                          <div className="absolute bottom-4 right-4 flex gap-2">
-                            {project.githubUrl && (
-                              <motion.a
-                                href={project.githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                className={`w-10 h-10 rounded-full ${
-                                  isDark 
-                                    ? "bg-slate-800/80 text-slate-300 hover:bg-slate-700" 
-                                    : "bg-white/80 text-slate-600 hover:bg-slate-100"
-                                } backdrop-blur-sm flex items-center justify-center transition-colors duration-300 shadow-lg`}
-                              >
-                                <Github className="w-4 h-4" />
-                              </motion.a>
-                            )}
-                            <motion.a
-                              href={project.liveUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              className={`w-10 h-10 rounded-full ${
-                                isDark 
-                                  ? "bg-slate-800/80 text-slate-300 hover:bg-slate-700" 
-                                  : "bg-white/80 text-slate-600 hover:bg-slate-100"
-                              } backdrop-blur-sm flex items-center justify-center transition-colors duration-300 shadow-lg`}
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </motion.a>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                </motion.div>
-
-                {/* MacBook Base/Keyboard */}
-                <div className={`mt-1 h-3 rounded-b-xl ${
+                {/* Project Counter */}
+                <div className={`px-4 py-2 rounded-full ${
                   isDark 
-                    ? "bg-gradient-to-b from-slate-700 to-slate-800" 
-                    : "bg-gradient-to-b from-slate-200 to-slate-300"
-                } shadow-lg`} />
+                    ? "bg-slate-800/80 text-slate-300" 
+                    : "bg-white/80 text-slate-600"
+                } backdrop-blur-sm text-sm font-medium shadow-lg`}>
+                  {currentProject + 1} / {projects.length}
+                </div>
 
-                {/* Technologies Tags */}
-                <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                  {project.technologies.map((tech, techIndex) => (
+                <button
+                  onClick={handleNextProject}
+                  className={`w-10 h-10 rounded-full ${
+                    isDark 
+                      ? "bg-slate-800/80 text-slate-300 hover:bg-slate-700" 
+                      : "bg-white/80 text-slate-600 hover:bg-slate-100"
+                  } backdrop-blur-sm flex items-center justify-center transition-colors duration-300 shadow-lg`}
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Project Content */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentProject}
+                  initial={{ opacity: 0, x: 300 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -300 }}
+                  transition={{ duration: 0.5 }}
+                  className="relative h-96"
+                >
+                  {/* Browser Chrome */}
+                  <div className={`flex items-center justify-between px-6 py-3 ${
+                    isDark ? "bg-slate-800 border-b border-slate-700" : "bg-slate-100 border-b border-slate-200"
+                  }`}>
+                    {/* Traffic Lights */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full bg-red-500" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                      <div className="w-3 h-3 rounded-full bg-green-500" />
+                    </div>
+
+                    {/* URL Bar */}
+                    <div className={`flex-1 mx-6 px-4 py-2 rounded-lg ${
+                      isDark ? "bg-slate-700 text-slate-300" : "bg-white text-slate-600"
+                    } text-sm font-mono truncate`}>
+                      {currentProjectData.liveUrl}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      {currentProjectData.githubUrl && (
+                        <motion.a
+                          href={currentProjectData.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className={`w-8 h-8 rounded-full ${
+                            isDark 
+                              ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
+                              : "bg-white text-slate-600 hover:bg-slate-50"
+                          } flex items-center justify-center transition-colors duration-300`}
+                        >
+                          <Github className="w-4 h-4" />
+                        </motion.a>
+                      )}
+                      <motion.a
+                        href={currentProjectData.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className={`w-8 h-8 rounded-full ${
+                          isDark 
+                            ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
+                            : "bg-white text-slate-600 hover:bg-slate-50"
+                        } flex items-center justify-center transition-colors duration-300`}
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </motion.a>
+                    </div>
+                  </div>
+
+                  {/* Embedded Website */}
+                  <div className="h-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+                    <iframe
+                      src={currentProjectData.liveUrl}
+                      title={currentProjectData.title}
+                      className="w-full h-full border-0"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-top-navigation"
+                    />
+                  </div>
+
+                  {/* Project Info Overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-xl font-bold text-white">
+                        {currentProjectData.title}
+                      </h3>
+                      <span className="text-sm px-3 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm">
+                        {currentProjectData.date}
+                      </span>
+                    </div>
+                    <p className="text-sm text-white/90 mb-3">
+                      {currentProjectData.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {currentProjectData.technologies.map((tech, techIndex) => (
+                        <span
+                          key={techIndex}
+                          className="px-2 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-400/30"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Featured Badge */}
+                  {currentProjectData.featured && (
+                    <div className="absolute top-20 left-6 px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-400/30 backdrop-blur-sm">
+                      <span className="text-xs font-medium">Featured</span>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
+
+          {/* MacBook Base/Keyboard */}
+          <div className={`mt-2 h-4 rounded-b-2xl ${
+            isDark 
+              ? "bg-gradient-to-b from-slate-700 to-slate-800" 
+              : "bg-gradient-to-b from-slate-200 to-slate-300"
+          } shadow-lg`} />
+        </motion.div>
+
+        {/* Project List */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="max-w-4xl mx-auto"
+        >
+          <h3 className={`text-2xl font-bold text-center mb-8 ${
+            isDark ? "text-white" : "text-slate-900"
+          }`}>
+            All Projects
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {projects.map((project, index) => (
+              <motion.button
+                key={index}
+                onClick={() => handleProjectSelect(index)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`p-4 rounded-xl text-left transition-all duration-300 ${
+                  currentProject === index
+                    ? (isDark 
+                        ? "bg-blue-500/20 border-2 border-blue-400" 
+                        : "bg-blue-500/10 border-2 border-blue-500")
+                    : (isDark 
+                        ? "bg-slate-800/50 border border-slate-700 hover:bg-slate-800" 
+                        : "bg-white/50 border border-slate-200 hover:bg-white")
+                }`}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="w-12 h-12 rounded-lg object-cover"
+                  />
+                  <div className="flex-1">
+                    <h4 className={`font-semibold text-sm ${
+                      isDark ? "text-white" : "text-slate-900"
+                    }`}>
+                      {project.title}
+                    </h4>
+                    <span className={`text-xs ${
+                      isDark ? "text-slate-400" : "text-slate-500"
+                    }`}>
+                      {project.date}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {project.technologies.slice(0, 3).map((tech, techIndex) => (
                     <span
                       key={techIndex}
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      className={`px-2 py-1 rounded text-xs ${
                         isDark 
-                          ? "bg-blue-500/20 text-blue-400" 
-                          : "bg-blue-500/10 text-blue-600"
+                          ? "bg-slate-700 text-slate-300" 
+                          : "bg-slate-100 text-slate-600"
                       }`}
                     >
                       {tech}
                     </span>
                   ))}
+                  {project.technologies.length > 3 && (
+                    <span className={`px-2 py-1 rounded text-xs ${
+                      isDark ? "text-slate-400" : "text-slate-500"
+                    }`}>
+                      +{project.technologies.length - 3}
+                    </span>
+                  )}
                 </div>
-              </div>
-            </motion.div>
-          ))}
+
+                <div className="flex items-center gap-2">
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className={`w-6 h-6 rounded flex items-center justify-center ${
+                        isDark 
+                          ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      } transition-colors`}
+                    >
+                      <Github className="w-3 h-3" />
+                    </a>
+                  )}
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className={`w-6 h-6 rounded flex items-center justify-center ${
+                      isDark 
+                        ? "bg-slate-700 text-slate-300 hover:bg-slate-600" 
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    } transition-colors`}
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              </motion.button>
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>
