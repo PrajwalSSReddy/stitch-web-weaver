@@ -14,27 +14,27 @@ const ProjectsSection = () => {
   // Fixed scroll-based animations for MacBook with proper opening timing
   const { scrollYProgress } = useScroll({
     target: macbookRef,
-    offset: ["start 90%", "end 10%"] // Start animation earlier when MacBook enters viewport
+    offset: ["start 100%", "end 0%"] // Start animation when MacBook first appears
   });
 
-  // Fixed lid rotation - opens when MacBook is visible, closes when scrolling out
+  // Fixed lid rotation - opens immediately when MacBook is visible
   const lidRotation = useTransform(
     scrollYProgress, 
-    [0, 0.3, 0.7, 1], 
-    [-5, -95, -95, -5] // Start closed, open fully when visible, stay open, then close
+    [0, 0.1, 0.9, 1], 
+    [-5, -95, -95, -5] // Start closed, open quickly when visible, stay open, then close
   );
   
   // Smoother opacity transition
   const baseOpacity = useTransform(
     scrollYProgress, 
-    [0, 0.2, 0.8, 1], 
+    [0, 0.1, 0.9, 1], 
     [0.4, 1, 1, 0.4]
   );
 
   // Scale animation for more dynamic effect
   const scale = useTransform(
     scrollYProgress,
-    [0, 0.3, 0.7, 1],
+    [0, 0.1, 0.9, 1],
     [0.95, 1, 1, 0.95]
   );
 
