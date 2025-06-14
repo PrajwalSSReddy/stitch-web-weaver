@@ -15,10 +15,12 @@ const ProjectsSection = () => {
   const [isMobile, setIsMobile] = useState(false);
   const macbookRef = useRef<HTMLDivElement>(null);
 
-  // Check if mobile view
+  // Check if mobile view - fixed threshold
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const width = window.innerWidth;
+      console.log("Window width:", width);
+      setIsMobile(width < 1024); // Use 1024px as threshold for laptop vs mobile
     };
     
     checkMobile();
@@ -29,14 +31,14 @@ const ProjectsSection = () => {
   // Fixed scroll-based animations for MacBook with proper opening timing
   const { scrollYProgress } = useScroll({
     target: macbookRef,
-    offset: ["start 90%", "end -50%"] // Extended range to include projects list
+    offset: ["start 90%", "end -50%"]
   });
 
-  // Modified lid rotation - starts open, closes when visible, fully closes when projects list visible
+  // Fixed lid rotation - properly opens the laptop
   const lidRotation = useTransform(
     scrollYProgress, 
-    [0, 0.15, 0.8, 1], 
-    [-90, -10, 90, 90] // Start open (-90), close when visible (-10), fully close when projects visible (90)
+    [0, 0.2, 0.8, 1], 
+    [0, -85, -85, -20] // Start closed (0), open to -85 degrees, stay open, close slightly at end
   );
   
   // Smoother opacity transition
@@ -296,7 +298,7 @@ const ProjectsSection = () => {
         damping: 20
       }}
       viewport={{ once: true }}
-      className="max-w-7xl mx-auto mb-16 perspective-1000 relative"
+      className="max-w-7xl mx-auto mb-16 relative"
       style={{ 
         perspective: '2000px',
         opacity: baseOpacity,
@@ -305,7 +307,7 @@ const ProjectsSection = () => {
     >
       {/* MacBook Base */}
       <div className="relative mx-auto" style={{ width: '100%', maxWidth: '1400px' }}>
-        {/* MacBook Lid (Screen) with Improved Animation */}
+        {/* MacBook Lid (Screen) with Fixed Animation */}
         <motion.div
           className={`relative ${
             isDark 
@@ -319,8 +321,7 @@ const ProjectsSection = () => {
             padding: '8px',
             transformOrigin: 'bottom center',
             rotateX: lidRotation,
-            transformStyle: 'preserve-3d',
-            transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            transformStyle: 'preserve-3d'
           }}
         >
           {/* MacBook Screen */}
@@ -410,7 +411,7 @@ const ProjectsSection = () => {
           loop: true,
           skipSnaps: false,
           dragFree: false,
-          watchDrag: true, // Enable drag/swipe
+          watchDrag: true,
         }}
       >
         <CarouselContent className="h-full -ml-0">
@@ -664,18 +665,23 @@ const ProjectsSection = () => {
           </motion.div>
         </ParallaxSection>
 
-        {/* Device Container with Carousel - Responsive Design */}
-        {isMobile ? (
-          <MobileDeviceFrame>
-            <DeviceContent />
-          </MobileDeviceFrame>
-        ) : (
-          <LaptopDeviceFrame>
-            <DeviceContent />
-          </LaptopDeviceFrame>
-        )}
+        {/* Device Container with Carousel - Properly Responsive */}
+        <div className="relative">
+          <div className="block lg:hidden">
+            {/* Mobile View */}
+            <MobileDeviceFrame>
+              <DeviceContent />
+            </MobileDeviceFrame>
+          </div>
+          
+          <div className="hidden lg:block">
+            {/* Desktop View - Laptop */}
+            <LaptopDeviceFrame>
+              <DeviceContent />
+            </LaptopDeviceFrame>
+          </div>
+        </div>
 
-        {/* Project List */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
